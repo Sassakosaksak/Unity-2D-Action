@@ -24,3 +24,4 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+/2D-Action/Assets/Textures

@@ -44,8 +44,6 @@ public class PlayerController : MonoBehaviour
 
         // アニメ
         animator.SetFloat("Speed", Mathf.Abs(moveInput.x));
-
-        Debug.Log(currentSpeed);
     }
 
     public void OnMove(InputAction.CallbackContext context)

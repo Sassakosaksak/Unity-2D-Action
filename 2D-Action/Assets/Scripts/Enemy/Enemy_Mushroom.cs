@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +8,7 @@ public class Enemy_Mushroom : BaseEnemyController
     {
         Idle,
         Run,
+        PrepareAttack,
         Attack,
         Stun,
         Die
@@ -14,13 +16,15 @@ public class Enemy_Mushroom : BaseEnemyController
 
     [Header("行動設定")]
     [SerializeField]
-    private float detectRange = 3f;
+    private float detectRange = 4f;
     [SerializeField]
-    private float walkSpeed = 2f;
+    private float walkSpeed = 0.5f;
     [SerializeField]
-    private float runSpeed = 2f;
+    private float runSpeed = 1.5f;
     [SerializeField]
-    private float attackRange = 2f;
+    private float attackSpeed = 1f;
+    [SerializeField]
+    private float attackRange = 1.5f;
     [SerializeField]
     private float attackCooldown = 2f;
     [SerializeField]
@@ -33,8 +37,9 @@ public class Enemy_Mushroom : BaseEnemyController
 
     private State currentState;
     private float attackTimer;
+    private float attackDirection;
 
-    private bool IsInit = true;
+    private bool hasInitialized = true;
 
     protected override void Start()
     {
@@ -60,10 +65,13 @@ public class Enemy_Mushroom : BaseEnemyController
                 UpdateRun();
                 break;
 
-            case State.Attack:
-                UpdateAttack();
-                break;
+                //case State.PrepareAttack:
+                //    UpdatePrepareAttack();
+                //    break;
 
+                //case State.Attack:
+                //    UpdateAttack();
+                //    break;
         }
     }
 
@@ -72,8 +80,9 @@ public class Enemy_Mushroom : BaseEnemyController
         float distance = GetDistanceToPlayer();
 
         // Idle状態でゆっくりプレイヤー側に移動
-        Vector2 dir = (player.position - transform.position).normalized;
-        rb.linearVelocity = new Vector2(dir.x * walkSpeed, rb.linearVelocityY);
+        // ToDo:回遊にしたい
+        //Vector2 dir = (player.position - transform.position).normalized;
+        //rb.linearVelocity = new Vector2(dir.x * walkSpeed, rb.linearVelocityY);
 
         // プレイヤーとの距離が一定以下になったらRun
         if (distance < detectRange)
@@ -90,49 +99,79 @@ public class Enemy_Mushroom : BaseEnemyController
         Vector2 dir = (player.position - transform.position).normalized;
         rb.linearVelocity = new Vector2(dir.x * runSpeed, rb.linearVelocityY);
 
-        if (distance < attackRange)
-        {
-            ChangeState(State.Attack);
-        }
         // 発見距離の2倍離れたらRun解除
-        else if (distance < detectRange * 2f)
+        if (distance > detectRange * 2f)
         {
             ChangeState(State.Idle);
+            return;
+        }
+
+        // 攻撃距離内 かつ クールダウン経過後
+        if (distance < attackRange && attackTimer > attackCooldown)
+        {
+            ChangeState(State.PrepareAttack);
         }
     }
 
-    void UpdateAttack()
+    #region AnimationEvents
+
+    public void Anim_AttackStart()
     {
-        // 動きを止めてその場で攻撃
+        ChangeState(State.Attack);
+    }
+
+    public void Anim_AttackEnd()
+    {
+        // 攻撃終了時に移動停止
         rb.linearVelocity = Vector2.zero;
 
-        if (attackTimer >= attackCooldown)
-        {
-            Attack();
-            attackTimer = 0f;
-        }
+        attackTimer = 0f;
 
-        float distance = GetDistanceToPlayer();
-        if (distance < detectRange)
+        if (animator.GetBool("IsStun"))
         {
-            ChangeState(State.Run);
+            return;
+        }
+        CommonMoveSetting();
+    }
+
+    public void Anim_StunStart()
+    {
+        rb.linearVelocity = Vector2.zero;
+        Debug.Log("Stunした");
+
+    }
+
+    public void Anim_StunEnd()
+    {
+        if (animator != null) animator.SetBool("IsStun", false);
+        Debug.Log(animator.GetBool("IsStun"));
+        CommonMoveSetting();
+    }
+
+    #endregion
+
+    void PrepareAttack()
+    {
+        rb.linearVelocity = Vector2.zero;
+
+        if (animator != null)
+        {
+            // 攻撃方向の保持
+            attackDirection = Mathf.Sign(player.position.x - transform.position.x);
         }
     }
 
     void Attack()
     {
-        if (animator != null)
-        {
-            animator.SetTrigger("Attack");
+        // 保持済みの方向で移動しながら攻撃
+        rb.linearVelocity = new Vector2(attackDirection * attackSpeed, rb.linearVelocityY);
 
-            // 確率で自身がスタン
-            if (Random.value < stunPercentage)
-            {
-                animator.SetTrigger("IsStun");
-            }
+        // 確率で自身がスタン
+        if (true)
+        {
+            ChangeState(State.Stun);
         }
     }
-
 
     void ChangeState(State newState)
     {
@@ -143,19 +182,31 @@ public class Enemy_Mushroom : BaseEnemyController
             case State.Idle:
                 if (animator != null) animator.SetBool("IsDetect", false);
                 // 初回のみその場で一時待機
-                if (!IsInit)
+                if (hasInitialized)
                 {
-                    IsInit = false;
+                    hasInitialized = false;
                     StartCoroutine(Wait());
                 }
+                // 処理はUpdate内
                 break;
 
             case State.Run:
                 if (animator != null) animator.SetBool("IsDetect", true);
+                // 処理はUpdate内
+                break;
+
+            case State.PrepareAttack:
+                animator.SetTrigger("PrepareAttack");
+                PrepareAttack();
                 break;
 
             case State.Attack:
-                rb.linearVelocity = Vector2.zero;
+                if (animator != null) animator.SetTrigger("Attack");
+                Attack();
+                break;
+
+            case State.Stun:
+                animator.SetBool("IsStun", true);
                 break;
         }
     }
@@ -174,6 +225,23 @@ public class Enemy_Mushroom : BaseEnemyController
         ChangeState(State.Die);
     }
 
+    /// <summary>
+    /// IdleとRunの自動判定 + State変更
+    /// </summary>
+    void CommonMoveSetting()
+    {
+        // 距離に応じてIdle or Runに戻る
+        float distance = GetDistanceToPlayer();
+        if (distance > detectRange)
+        {
+            ChangeState(State.Idle);
+        }
+        else
+        {
+            ChangeState(State.Run);
+        }
+    }
+
     public void SpawnSpore()
     {
         Debug.Log("胞子発射！");
@@ -185,4 +253,5 @@ public class Enemy_Mushroom : BaseEnemyController
         Spore spore = sporeObject.GetComponent<Spore>();
         spore.Init(dir, Level);
     }
+
 }

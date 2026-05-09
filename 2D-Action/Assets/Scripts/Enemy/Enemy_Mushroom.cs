@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Enemy_Mushroom : BaseEnemyController
 {
@@ -167,7 +165,7 @@ public class Enemy_Mushroom : BaseEnemyController
         rb.linearVelocity = new Vector2(attackDirection * attackSpeed, rb.linearVelocityY);
 
         // 確率で自身がスタン
-        if (true)
+        if (Random.value < stunPercentage)
         {
             ChangeState(State.Stun);
         }

@@ -3,14 +3,17 @@ using UnityEngine;
 
 public class BaseEnemyController : MonoBehaviour
 {
-    [Header("ステータス")]
-    public int maxHP = 10;
-    protected int currentHP;
-
-    [Header("参照")]
+    [Header("Reference")]
     protected Transform player;
     protected Rigidbody2D rb;
     protected Animator animator;
+
+    [Header("Status")]
+    public int maxHP = 10;
+    protected int currentHP;
+
+    [Header("Combat")]
+    protected int bodyAttackDamage = 1;
 
     protected bool isDead = false;
     protected bool isMove = false;
@@ -84,6 +87,14 @@ public class BaseEnemyController : MonoBehaviour
     {
         if (player == null) return Mathf.Infinity;
         return Vector2.Distance(transform.position, player.position);
+    }
+
+    public virtual void BodyAttack(GameObject playerObj)
+    {
+        PlayerController player = playerObj.GetComponent<PlayerController>();
+        if (player == null) return;
+
+        player.TakeDamage(bodyAttackDamage);
     }
 
     /// <summary>

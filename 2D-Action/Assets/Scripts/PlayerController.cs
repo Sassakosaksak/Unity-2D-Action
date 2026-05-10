@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     private bool isDead;
     private float invincibleTime = 1f;
 
+    private State currentState;
 
     public float speed = 10f;
     [SerializeField]
@@ -53,6 +54,32 @@ public class PlayerController : MonoBehaviour
 
         // アニメ
         animator.SetFloat("Speed", Mathf.Abs(moveInput.x));
+    }
+
+    void ChangeState(State newState)
+    {
+        currentState = newState;
+
+        switch (newState)
+        {
+            case State.Idle:
+                break;
+
+            case State.Run:
+                break;
+
+            case State.Hit:
+                if (animator != null) animator.SetTrigger("Hit");
+                break;
+
+            case State.Die:
+                if (animator != null)
+                {
+                    animator.SetTrigger("Die");
+                    animator.SetBool("IsDead", true);
+                }
+                break;
+        }
     }
 
     private void culcPlayerSpeed()
@@ -103,11 +130,13 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (isInvincible) return;
+        if (isDead) return;
 
         currentHP -= damage;
 
         if (currentHP <= 0)
         {
+            ChangeState(State.Die);
             Die();
             return;
         }
@@ -131,7 +160,7 @@ public class PlayerController : MonoBehaviour
         // 一瞬停止
         Time.timeScale = 0f;
 
-        yield return new WaitForSecondsRealtime(0.05f);
+        yield return new WaitForSecondsRealtime(0.5f);
 
         // スロー
         Time.timeScale = 0.2f;
@@ -144,12 +173,15 @@ public class PlayerController : MonoBehaviour
         // 元に戻す
         Time.timeScale = 1f;
 
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 
     public void Die()
     {
         isDead = true;
-        DieSequence();
+        rb.linearVelocity = Vector2.zero;
+        rb.simulated = false;
+        StartCoroutine(DieSequence());
     }
+
 }

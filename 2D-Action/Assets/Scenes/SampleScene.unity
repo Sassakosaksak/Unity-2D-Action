@@ -129,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 76552037}
   - component: {fileID: 76552036}
-  - component: {fileID: 76552035}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -137,28 +136,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &76552035
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 76552034}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 010d82312ca74dc4cadd4404a28f8ed3, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!212 &76552036
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -354,8 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 320c48994c2c5de42a5143324a850537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHP: 10
-  currentHP: 1
+  currentHP: 2
   speed: 5
   Accel: 20
   Decel: 30
@@ -594,6 +570,7 @@ GameObject:
   - component: {fileID: 574184468}
   - component: {fileID: 574184470}
   - component: {fileID: 574184469}
+  - component: {fileID: 574184471}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -693,6 +670,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &574184471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 574184467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efcf768357a4d9c47b7433750d43e8fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,11 +18,10 @@ public class EnemyBodyAttack : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Debug.Log("衝突");
-
         // プレイヤーに接触ダメージ
         if (collision.CompareTag("Player"))
         {
+            Debug.Log("衝突");
             enemy.BodyAttack(collision.gameObject);
         }
     }

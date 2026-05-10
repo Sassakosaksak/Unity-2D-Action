@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private bool isInvincible;
     private bool isDead;
     private float invincibleTime = 1f;
+    private bool isGrounded;
 
     private State currentState;
 
@@ -24,6 +25,19 @@ public class PlayerController : MonoBehaviour
     private float Accel = 20f;
     [SerializeField]
     private float Decel = 30f;
+
+    [Header("ジャンプ関連")]
+    [SerializeField] 
+    private float jumpPower = 12f;
+
+    [SerializeField] 
+    private Transform groundCheck;
+    [SerializeField]
+    private Vector2 groundCheckSize = new Vector2(0.8f, 0.1f);
+    [SerializeField] 
+    private float groundCheckDistance = 0.1f;
+    [SerializeField] 
+    private LayerMask groundLayer;
 
     [ContextMenu("Die")]
     private void DebugDie()
@@ -50,10 +64,14 @@ public class PlayerController : MonoBehaviour
     {
         if (isDead) return;
 
+        CheckGround();
+
         culcPlayerSpeed();
 
         // アニメ
-        animator.SetFloat("Speed", Mathf.Abs(moveInput.x));
+        animator.SetFloat("HorizontalSpeed", Mathf.Abs(moveInput.x));
+        animator.SetBool("IsGrounded", isGrounded);
+        animator.SetFloat("VerticalSpeed", rb.linearVelocity.y);
     }
 
     void ChangeState(State newState)
@@ -107,6 +125,8 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = new Vector2(currentSpeed, rb.linearVelocity.y);
     }
 
+    #region InputActions
+
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
@@ -126,6 +146,19 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Attack");
         }
     }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (!context.started) return;
+        if (isDead) return;
+
+        if (isGrounded)
+        {
+            animator.SetTrigger("Jump");
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
+        }
+    }
+#endregion
 
     public void TakeDamage(int damage)
     {
@@ -184,4 +217,26 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(DieSequence());
     }
 
+    private void CheckGround()
+    {
+        isGrounded = Physics2D.BoxCast(
+            groundCheck.position,
+            groundCheckSize,
+            0f,
+            Vector2.down,
+            groundCheckDistance,
+            groundLayer
+        );
+        Debug.Log(isGrounded);
+    }
+    private void OnDrawGizmos()
+    {
+        if (groundCheck == null) return;
+
+        Gizmos.color = Color.red;
+
+        Vector2 boxCenter = (Vector2)groundCheck.position + Vector2.down * groundCheckDistance;
+
+        Gizmos.DrawWireCube(boxCenter, groundCheckSize);
+    }
 }

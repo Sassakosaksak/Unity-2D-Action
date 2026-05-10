@@ -244,6 +244,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 574184468}
+  - {fileID: 1937890451}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &320370120
@@ -335,6 +336,13 @@ MonoBehaviour:
   speed: 5
   Accel: 20
   Decel: 30
+  jumpPower: 12
+  groundCheck: {fileID: 1937890451}
+  groundCheckSize: {x: 0.8, y: 0.1}
+  groundCheckDistance: 0.03
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &320370123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,6 +400,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: ae4ac77b-74f4-41fe-9b69-87cbb664c839
     m_ActionName: Player/Move
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 24446984-ae84-4a71-8648-2c65049c3013
+    m_ActionName: 'Player/Jump[/Keyboard/space]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -570,7 +582,6 @@ GameObject:
   - component: {fileID: 574184468}
   - component: {fileID: 574184470}
   - component: {fileID: 574184469}
-  - component: {fileID: 574184471}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -670,18 +681,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &574184471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 574184467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efcf768357a4d9c47b7433750d43e8fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,7 +914,7 @@ GameObject:
   - component: {fileID: 928698314}
   - component: {fileID: 928698313}
   - component: {fileID: 928698312}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: layer1
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -6525,6 +6524,37 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &1937890450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1937890451}
+  m_Layer: 0
+  m_Name: GroundSensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1937890451
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937890450}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.65, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 320370118}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2038123509
 GameObject:
   m_ObjectHideFlags: 0

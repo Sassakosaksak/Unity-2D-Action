@@ -10,13 +10,29 @@ public class BaseEnemyController : MonoBehaviour
 
     [Header("Status")]
     public int maxHP = 10;
+    [SerializeField]
     protected int currentHP;
+    [SerializeField]
+    protected bool rightFacing = false;
 
     [Header("Combat")]
+    [SerializeField]
     protected int bodyAttackDamage = 1;
+    [SerializeField]
+    private float knockBackPower = 3f;
+    [SerializeField]
+    private float invincibleTime = 0.3f;
+    [SerializeField]
+    private bool isKnockBacking = false;
+    [SerializeField]
+    private float knockBackTime = 0.5f;
+    [SerializeField]
+    private float knockBackDecay = 0.9f;
 
     protected bool isDead = false;
     protected bool isMove = false;
+    protected bool isInvincible = false;
+
 
     /// <summary>
     /// キャラクターのレベル
@@ -41,32 +57,48 @@ public class BaseEnemyController : MonoBehaviour
         {
             player = playerObj.transform;
         }
+
+        ApplyFacing();
     }
 
     protected virtual void Update()
     {
         if (isDead) return;
+        if (isKnockBacking) return;
     }
 
-    public virtual void TakeDamage(int damage)
+    protected virtual void FixedUpdate()
+    {
+        if (isKnockBacking)
+        {
+            rb.linearVelocity *= knockBackDecay;
+            return;
+        }
+    }
+
+    public virtual void TakeDamage(int damage, Vector2 attackerPosition)
     {
         if (isDead) return;
+        if (isInvincible) return;
 
         currentHP -= damage;
-
-        OnDamage();
+        KnockBack(attackerPosition);
 
         if (currentHP <= 0)
         {
             Die();
+            return;
         }
+        Hit();
+
     }
 
-    protected virtual void OnDamage()
+    protected virtual void Hit()
     {
         if (animator != null)
         {
             animator.SetTrigger("Hit");
+            StartCoroutine(InvincibleCoroutine());
         }
     }
 
@@ -76,11 +108,43 @@ public class BaseEnemyController : MonoBehaviour
 
         if (animator != null)
         {
-            animator.SetTrigger("Die");
+            rb.linearVelocity = Vector2.zero;
+            animator.SetBool("IsDie", true);
         }
 
         // TODO:Dieアニメーション後にDestroyするように修正
         Destroy(gameObject, 1.5f);
+    }
+
+    protected virtual void KnockBack(Vector2 attackerPosition)
+    {
+        StartCoroutine(KnockBackCoroutine(attackerPosition));
+    }
+
+    private IEnumerator KnockBackCoroutine(Vector2 attackerPosition)
+    {
+        isKnockBacking = true;
+
+        Vector2 direction =
+            ((Vector2)transform.position - attackerPosition).normalized;
+
+        rb.linearVelocity = new Vector2(
+            direction.x * knockBackPower,
+            rb.linearVelocity.y
+        );
+        // 自然な吹っ飛びにするための倍率
+        yield return new WaitForSeconds(knockBackTime);
+
+        rb.linearVelocity = Vector2.zero;
+        isKnockBacking = false;
+
+        RecoverFromHit();
+    }
+    protected virtual IEnumerator InvincibleCoroutine()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibleTime);
+        isInvincible = false;
     }
 
     protected float GetDistanceToPlayer()
@@ -95,6 +159,55 @@ public class BaseEnemyController : MonoBehaviour
         if (player == null) return;
 
         player.TakeDamage(bodyAttackDamage);
+    }
+
+    /// <summary>
+    /// オブジェクトの反転
+    /// </summary>
+    /// <param name="faceRight">true:右向きに変更、false:左向きに変更。方向が一致している場合はSkip</param>
+    protected virtual void Flip(bool faceRight)
+    {
+        if (rightFacing == faceRight) return;
+
+        rightFacing = faceRight;
+
+        ApplyFacing();
+    }
+
+    protected virtual void FlipToPlayer()
+    {
+        if (player == null) return;
+        bool faceRight = player.position.x > transform.position.x;
+
+        Flip(faceRight);
+    }
+
+    protected virtual void RecoverFromHit()
+    {
+
+    }
+
+    private void ApplyFacing()
+    {
+        // 敵オブジェクトはデフォルト左向きで作っているので
+        // !rightFacingで(1,1,1)を設定
+        if (!rightFacing)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+    }
+    protected virtual bool IsPlayerDead()
+    {
+        if (player == null) return true;
+
+        PlayerController playerController =
+            player.GetComponent<PlayerController>();
+
+        return playerController != null && playerController.IsDead;
     }
 
     /// <summary>

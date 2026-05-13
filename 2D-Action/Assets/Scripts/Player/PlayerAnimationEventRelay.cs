@@ -4,10 +4,12 @@ using UnityEngine.InputSystem;
 public class PlayerAnimationEventRelay : MonoBehaviour
 {
     private PlayerController player;
+    private PlayerAttack playerAttack;
 
     private void Awake()
     {
         player = GetComponentInParent<PlayerController>();
+        playerAttack = GetComponentInChildren<PlayerAttack>();
     }
 
     //public void DieEnd()
@@ -15,6 +17,10 @@ public class PlayerAnimationEventRelay : MonoBehaviour
     //    player.Anim_DieEnd();
     //}
 
+    public void AttackStart()
+    {
+        player.Anim_AttackEnd();
+    }
     public void AttackEnd()
     {
         player.Anim_AttackEnd();

@@ -15,9 +15,11 @@ public class PlayerController : MonoBehaviour
     private int currentHP;
     private bool isInvincible;
     private bool isDead;
+    public bool IsDead => isDead;
     private float invincibleTime = 1f;
     private bool isGrounded;
     private bool isAttacking;
+    private bool rightFacing = true;
 
     private State currentState;
 
@@ -104,6 +106,7 @@ public class PlayerController : MonoBehaviour
             case State.Run:
                 break;
 
+            // TODO:ここら辺のState不要かもなので要確認
             case State.Hit:
                 if (animator != null) animator.SetTrigger("Hit");
                 break;
@@ -174,10 +177,11 @@ public class PlayerController : MonoBehaviour
 
         moveInput = context.ReadValue<Vector2>();
 
+        rightFacing = moveInput.x > 0;
         // 向き反転
         if (moveInput.x != 0)
         {
-            transform.localScale = new Vector2(moveInput.x > 0 ? 1 : -1, 1);
+            transform.localScale = new Vector2(rightFacing ? 1 : -1, 1);
         }
 
     }
@@ -268,8 +272,9 @@ public class PlayerController : MonoBehaviour
     public void Die()
     {
         isDead = true;
+        gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
         rb.linearVelocity = Vector2.zero;
-        rb.simulated = false;
+        //rb.simulated = false;
         StartCoroutine(DieSequence());
     }
 

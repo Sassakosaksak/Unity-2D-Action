@@ -49,9 +49,15 @@ public class Enemy_Mushroom : BaseEnemyController
     protected override void Update()
     {
         base.Update();
-        if (isDead) return;
 
         attackTimer += Time.deltaTime;
+
+        if (IsPlayerDead())
+        {
+            ChangeState(State.Idle);
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
 
         switch (currentState)
         {
@@ -94,6 +100,7 @@ public class Enemy_Mushroom : BaseEnemyController
         float distance = GetDistanceToPlayer();
 
         // プレイヤー方向に移動
+        FlipToPlayer();
         Vector2 dir = (player.position - transform.position).normalized;
         rb.linearVelocity = new Vector2(dir.x * runSpeed, rb.linearVelocityY);
 
@@ -209,19 +216,19 @@ public class Enemy_Mushroom : BaseEnemyController
         }
     }
 
-    protected override void OnDamage()
-    {
-        base.OnDamage();
+    //protected override void Hit()
+    //{
+    //    base.Hit();
 
-        // ノックバック+無敵時間付与
-        rb.linearVelocity = Vector2.zero;
-    }
+    //    // TODO:ノックバック+無敵時間付与 Baseでいいかも
+    //}
 
-    protected override void Die()
-    {
-        base.Die();
-        ChangeState(State.Die);
-    }
+    //protected override void Die()
+    //{
+    //    base.Die();
+    //    // TODO:いらないかも
+    //    //ChangeState(State.Die);
+    //}
 
     /// <summary>
     /// IdleとRunの自動判定 + State変更
@@ -238,6 +245,13 @@ public class Enemy_Mushroom : BaseEnemyController
         {
             ChangeState(State.Run);
         }
+    }
+
+    protected override void RecoverFromHit()
+    {
+        base.RecoverFromHit();
+
+        ChangeState(State.Idle);
     }
 
     public void SpawnSpore()

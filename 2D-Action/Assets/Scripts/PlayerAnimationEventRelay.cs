@@ -5,7 +5,6 @@ public class PlayerAnimationEventRelay : MonoBehaviour
 {
     private PlayerController player;
 
-    // TODO:ïsóvÇ»ÇÁè¡Ç∑
     private void Awake()
     {
         player = GetComponentInParent<PlayerController>();
@@ -16,10 +15,10 @@ public class PlayerAnimationEventRelay : MonoBehaviour
     //    player.Anim_DieEnd();
     //}
 
-    //public void AttackEnd()
-    //{
-    //    player.Anim_AttackEnd();
-    //}
+    public void AttackEnd()
+    {
+        player.Anim_AttackEnd();
+    }
 
     //public void StunStart()
     //{

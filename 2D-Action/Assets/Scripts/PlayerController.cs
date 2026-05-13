@@ -17,18 +17,30 @@ public class PlayerController : MonoBehaviour
     private bool isDead;
     private float invincibleTime = 1f;
     private bool isGrounded;
+    private bool isAttacking;
 
     private State currentState;
 
+    [SerializeField]
     public float speed = 10f;
     [SerializeField]
     private float Accel = 20f;
     [SerializeField]
     private float Decel = 30f;
+    [SerializeField]
+    private float HolizontalSpeedThreshold = 0.05f;
+    [SerializeField]
+    private float FallSpeedThreshold = -0.1f;
 
     [Header("ジャンプ関連")]
     [SerializeField] 
-    private float jumpPower = 12f;
+    private float jumpPower = 10f;
+    [SerializeField] 
+    private float fallMultiplier = 3.2f;
+    [SerializeField]
+    private float jumpBufferTime = 0.1f;
+    [SerializeField]
+    private float maxFallSpeed = -18f;
 
     [SerializeField] 
     private Transform groundCheck;
@@ -66,15 +78,21 @@ public class PlayerController : MonoBehaviour
 
         CheckGround();
 
-        culcPlayerSpeed();
-
         // アニメ
-        animator.SetFloat("HorizontalSpeed", Mathf.Abs(moveInput.x));
+        animator.SetFloat("HorizontalSpeed", Mathf.Abs(rb.linearVelocity.x));
         animator.SetBool("IsGrounded", isGrounded);
         animator.SetFloat("VerticalSpeed", rb.linearVelocity.y);
     }
 
-    void ChangeState(State newState)
+    private void FixedUpdate()
+    {
+        if (isDead) return;
+        
+        CulcPlayerSpeed();
+        ApplyBetterJump();
+    }
+
+    private void ChangeState(State newState)
     {
         currentState = newState;
 
@@ -100,7 +118,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void culcPlayerSpeed()
+    private void CulcPlayerSpeed()
     {
         // 入力値
         float move = moveInput.x;
@@ -114,21 +132,46 @@ public class PlayerController : MonoBehaviour
 
         if (Mathf.Abs(move) > 0.1f)
         {
-            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, Accel * Time.deltaTime);
+            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, Accel * Time.fixedDeltaTime);
         }
         else
         {
-            currentSpeed = Mathf.MoveTowards(currentSpeed, 0, Decel * Time.deltaTime);
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0, Decel * Time.fixedDeltaTime);
+        }
+
+        if (Mathf.Abs(currentSpeed) < HolizontalSpeedThreshold)
+        {
+            currentSpeed = 0f;
         }
 
         // 移動
         rb.linearVelocity = new Vector2(currentSpeed, rb.linearVelocity.y);
     }
 
+    /// <summary>
+    /// 落下時速度の制御
+    /// </summary>
+    private void ApplyBetterJump()
+    {
+        if (isGrounded) return;
+
+        if (rb.linearVelocity.y < 0)
+        {
+            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+        }
+
+        if (rb.linearVelocity.y < maxFallSpeed)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, maxFallSpeed);
+        }
+    }
+
     #region InputActions
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (isDead) return;
+
         moveInput = context.ReadValue<Vector2>();
 
         // 向き反転
@@ -141,14 +184,18 @@ public class PlayerController : MonoBehaviour
 
     public void OnAttack(InputAction.CallbackContext context)
     {
+        if (isDead) return;
+
         if (context.started)
         {
+            SetIsAttacking(true);
             animator.SetTrigger("Attack");
         }
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
+        // TODO：コヨーテタイム、ジャンプバッファ入れたい
         if (!context.started) return;
         if (isDead) return;
 
@@ -158,8 +205,17 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
         }
     }
-#endregion
+    #endregion
 
+    #region Animation Events
+
+    public void Anim_AttackEnd()
+    {
+        SetIsAttacking();
+    }
+
+    #endregion
+    
     public void TakeDamage(int damage)
     {
         if (isInvincible) return;
@@ -227,8 +283,14 @@ public class PlayerController : MonoBehaviour
             groundCheckDistance,
             groundLayer
         );
-        Debug.Log(isGrounded);
     }
+
+    private void SetIsAttacking(bool isAttacking = false)
+    {
+        this.isAttacking = isAttacking;
+        animator.SetBool("IsAttacking", isAttacking);
+    }
+
     private void OnDrawGizmos()
     {
         if (groundCheck == null) return;

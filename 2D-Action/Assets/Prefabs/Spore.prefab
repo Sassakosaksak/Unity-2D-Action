@@ -167,4 +167,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sporeDamage: 1
   lifeTime: 5
-  baseSpeed: 3
+  baseSpeed: 1.5

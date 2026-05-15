@@ -255,6 +255,7 @@ GameObject:
   - component: {fileID: 320370122}
   - component: {fileID: 320370123}
   - component: {fileID: 320370124}
+  - component: {fileID: 320370125}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -365,6 +366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHP: 100
+  invincibleTime: 1
   speed: 5
   Accel: 20
   Decel: 30
@@ -381,7 +383,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   knockBackXPower: 2
-  knockBackYPower: 1.5
+  knockBackYPower: 3
   knockBackControlLockTime: 0.2
 --- !u!114 &320370123
 MonoBehaviour:
@@ -474,6 +476,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitBoxCollider: {fileID: 665191528}
+--- !u!114 &320370125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 320370116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 225d397b75333f7469875605af2d5496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 574184470}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -4545,6 +4560,7 @@ GameObject:
   - component: {fileID: 1483499521}
   - component: {fileID: 1483499525}
   - component: {fileID: 1483499519}
+  - component: {fileID: 1483499526}
   m_Layer: 8
   m_Name: Mushroom
   m_TagString: Enemy
@@ -4576,10 +4592,10 @@ MonoBehaviour:
   Level: 1
   detectRange: 4
   walkSpeed: 0.5
-  runSpeed: 1.5
-  attackSpeed: 1
-  attackRange: 1.5
-  attackCooldown: 2
+  runSpeed: 1
+  attackSpeed: 0.5
+  attackRange: 2
+  attackCooldown: 1
   stunPercentage: 0.25
   sporePrefab: {fileID: 3576420105507369818, guid: cf3379706e259c541b007c5fca5e79f3, type: 3}
   firePoint: {fileID: 138359909}
@@ -4673,6 +4689,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.9263621, y: 1.0291579}
   m_EdgeRadius: 0
+--- !u!114 &1483499526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1483499518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 225d397b75333f7469875605af2d5496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 1551761025}
 --- !u!1 &1551761021
 GameObject:
   m_ObjectHideFlags: 0

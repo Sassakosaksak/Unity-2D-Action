@@ -1,11 +1,13 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
     Animator animator;
+    AnimationEffectController animEffect;
     Vector2 moveInput;
 
     [Header("ステータス関連")]
@@ -20,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private float invincibleTime = 1f;
     private bool isGrounded;
     private bool isAttacking;
+    private bool isHit;
     private bool rightFacing = true;
     private bool isKnockBacking = false;
 
@@ -81,6 +84,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
+        animEffect = GetComponent<AnimationEffectController>();
     }
 
     void Update()
@@ -185,11 +189,13 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         if (isDead) return;
-        if (isKnockBacking) return;
-
         moveInput = context.ReadValue<Vector2>();
 
+        // ノックバックの移動は操作不可時間があるため見ない
+        //if (isKnockBacking) return;
+
         rightFacing = moveInput.x > 0;
+
         // 向き反転
         if (moveInput.x != 0)
         {
@@ -261,8 +267,12 @@ public class PlayerController : MonoBehaviour
     {
         isInvincible = true;
         isKnockBacking = true;
+        isHit = true;
 
-        animator.SetTrigger("Hit");
+        animator.SetBool("IsHit", isHit);
+
+        animEffect.PlayHitPunch();
+        animEffect.PlayInvincibleBlink();
 
         float dirX = transform.position.x >= attackerPosition.x ? 1f : -1f;
 
@@ -273,10 +283,12 @@ public class PlayerController : MonoBehaviour
 
         RecoverFromHit();
         
-        yield return new WaitForSeconds(invincibleTime);
+        yield return new WaitForSeconds(invincibleTime - knockBackControlLockTime);
 
         rb.linearVelocity = Vector2.zero;
         isInvincible = false;
+
+        animEffect.StopInvincibleBlink();
     }
 
     IEnumerator InvincibleCoroutine()
@@ -339,6 +351,8 @@ public class PlayerController : MonoBehaviour
     public void RecoverFromHit()
     {
         isKnockBacking = false;
+        isHit = false;
+        animator.SetBool("IsHit", isHit);
     }
 
     private void OnDrawGizmos()

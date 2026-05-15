@@ -13,12 +13,15 @@ public class Spore : MonoBehaviour, IBreakable
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
+    [SerializeField]
+    private Transform visual;
+
     private bool isBreaking = false;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = visual.GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -64,11 +67,11 @@ public class Spore : MonoBehaviour, IBreakable
 
         rb.linearVelocity = Vector2.zero;
 
-        transform.DOKill();
+        visual.DOKill();
 
         // è’ìÀéûÇ…çLÇ™Ç¡Çƒè¡Ç¶ÇÈÉAÉjÉÅÅ[ÉVÉáÉì
         Sequence seq = DOTween.Sequence();
-        seq.Append(transform.DOScale(1.5f, 0.2f));
+        seq.Append(visual.DOScale(1.5f, 0.2f));
         seq.Join(spriteRenderer.DOFade(0f, 0.2f));
 
         seq.OnComplete(() =>
@@ -80,18 +83,18 @@ public class Spore : MonoBehaviour, IBreakable
     private void DriftingAnimation()
     {
         // ÉTÉCÉYägèk
-        transform.DOScale(1.1f, 0.6f)
-                 .SetLoops(-1, LoopType.Yoyo)
-                 .SetEase(Ease.InOutSine);
+        visual.DOScale(1.1f, 0.6f)
+              .SetLoops(-1, LoopType.Yoyo)
+              .SetEase(Ease.InOutSine);
 
         // è„â∫óhìÆ
-        transform.DOMoveY(transform.position.y + 0.15f, 1.2f)
-                 .SetLoops(-1, LoopType.Yoyo)
-                 .SetEase(Ease.InOutSine);
+        visual.DOMoveY(transform.position.y + 0.15f, 1.2f)
+              .SetLoops(-1, LoopType.Yoyo)
+              .SetEase(Ease.InOutSine);
 
         // óhÇÍÇÈÇÊÇ§Ç…âÒì]
-        transform.DORotate(new Vector3(0, 0, 10f), 1.5f)
-                 .SetLoops(-1, LoopType.Yoyo)
-                 .SetEase(Ease.InOutSine);
+        visual.DORotate(new Vector3(0, 0, 10f), 1.5f)
+              .SetLoops(-1, LoopType.Yoyo)
+              .SetEase(Ease.InOutSine);
     }
 }

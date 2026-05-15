@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour
     Vector2 moveInput;
 
     [Header("ステータス関連")]
-    //[SerializeField]
-    //private int playerHP = 10;
+    [SerializeField]
+    private int maxHP = 10;
     [SerializeField]
     private int currentHP;
     private bool isInvincible;
@@ -23,10 +23,14 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool isAttacking;
     private bool isHit;
+    [SerializeField]
     private bool rightFacing = true;
     private bool isKnockBacking = false;
 
     private State currentState;
+
+    [SerializeField]
+    private HPBar hpBar;
 
     [SerializeField]
     public float speed = 10f;
@@ -85,6 +89,9 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
         animEffect = GetComponent<AnimationEffectController>();
+
+        currentHP = maxHP;
+        hpBar.SetHP(currentHP, maxHP);
     }
 
     void Update()
@@ -251,6 +258,7 @@ public class PlayerController : MonoBehaviour
         if (isDead) return;
 
         currentHP -= damage;
+        hpBar.SetHP(currentHP, maxHP);
 
         if (currentHP <= 0)
         {
@@ -318,6 +326,9 @@ public class PlayerController : MonoBehaviour
         // 元に戻す
         Time.timeScale = 1f;
 
+        yield return new WaitForSeconds(1.5f);
+
+        GameManager.Instance.GameOver();
         //Destroy(gameObject);
     }
 

@@ -21,7 +21,6 @@ public class EnemyBodyAttack : MonoBehaviour
         // プレイヤーに接触ダメージ
         if (collision.CompareTag("Player"))
         {
-            Debug.Log("衝突");
             enemy.BodyAttack(collision.gameObject);
         }
     }

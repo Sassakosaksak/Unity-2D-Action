@@ -32,6 +32,6 @@ public class EnemyAnimationRelay : MonoBehaviour
 
     public void SpawnSpore()
     {
-        //mush.SpawnSpore(); 
+        mush.SpawnSpore();
     }
 }

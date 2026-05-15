@@ -19,25 +19,21 @@ public class PlayerAnimationEventRelay : MonoBehaviour
 
     public void AttackStart()
     {
-        player.Anim_AttackEnd();
+        player.Anim_AttackStart();
     }
+
     public void AttackEnd()
     {
         player.Anim_AttackEnd();
     }
 
-    //public void StunStart()
-    //{
-    //    player.Anim_StunStart();
-    //}
+    public void HitEnd()
+    {
+        player.RecoverFromHit();
+    }
 
     //public void StunEnd()
     //{
     //    player.Anim_StunEnd();
     //}
-
-    public void SpawnSpore()
-    {
-        //mush.SpawnSpore(); 
-    }
 }

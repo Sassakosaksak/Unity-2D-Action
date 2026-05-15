@@ -210,6 +210,37 @@ Transform:
   - {fileID: 1698449679}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &138359908
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 138359909}
+  m_Layer: 8
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &138359909
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138359908}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.835, y: 0.371, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1551761022}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &320370116
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,7 +364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 320c48994c2c5de42a5143324a850537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHP: 2
+  currentHP: 100
   speed: 5
   Accel: 20
   Decel: 30
@@ -349,6 +380,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  knockBackXPower: 2
+  knockBackYPower: 1.5
+  knockBackControlLockTime: 0.2
 --- !u!114 &320370123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -763,7 +797,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 000000001b6be0876742c60fedd80a079d35451b4dbe3372
+  m_ApplyToSortingLayers: 000000001b6be0876742c60fedd80a079d35451b4dbe33726bf2bebf
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -4531,6 +4565,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 5
+  currentHP: 0
   rightFacing: 0
   bodyAttackDamage: 1
   knockBackPower: 3
@@ -4546,8 +4581,8 @@ MonoBehaviour:
   attackRange: 1.5
   attackCooldown: 2
   stunPercentage: 0.25
-  sporePrefab: {fileID: 0}
-  firePoint: {fileID: 0}
+  sporePrefab: {fileID: 3576420105507369818, guid: cf3379706e259c541b007c5fca5e79f3, type: 3}
+  firePoint: {fileID: 138359909}
 --- !u!50 &1483499521
 Rigidbody2D:
   serializedVersion: 5
@@ -4563,7 +4598,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 0
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -4573,7 +4608,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!4 &1483499524
 Transform:
@@ -4669,7 +4704,8 @@ Transform:
   m_LocalPosition: {x: 0, y: -0.009, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 138359909}
   m_Father: {fileID: 1483499524}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1551761024

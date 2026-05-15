@@ -16,10 +16,12 @@ public class PlayerController : MonoBehaviour
     private bool isInvincible;
     private bool isDead;
     public bool IsDead => isDead;
+    [SerializeField]
     private float invincibleTime = 1f;
     private bool isGrounded;
     private bool isAttacking;
     private bool rightFacing = true;
+    private bool isKnockBacking = false;
 
     private State currentState;
 
@@ -53,10 +55,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] 
     private LayerMask groundLayer;
 
+    [SerializeField]
+    private float knockBackXPower = 2f;
+    [SerializeField]
+    private float knockBackYPower = 3f;
+    [SerializeField] 
+    private float knockBackControlLockTime = 0.25f;
+
     [ContextMenu("Die")]
     private void DebugDie()
     {
-        TakeDamage(999);
+        TakeDamage(999, transform.localPosition + new Vector3(1, 0, 0));
     }
 
     enum State
@@ -77,6 +86,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (isDead) return;
+        if (isKnockBacking) return;
 
         CheckGround();
 
@@ -89,7 +99,8 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         if (isDead) return;
-        
+        if (isKnockBacking) return;
+
         CulcPlayerSpeed();
         ApplyBetterJump();
     }
@@ -174,6 +185,7 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         if (isDead) return;
+        if (isKnockBacking) return;
 
         moveInput = context.ReadValue<Vector2>();
 
@@ -189,6 +201,7 @@ public class PlayerController : MonoBehaviour
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (isDead) return;
+        if (isKnockBacking) return;
 
         if (context.started)
         {
@@ -202,6 +215,7 @@ public class PlayerController : MonoBehaviour
         // TODO：コヨーテタイム、ジャンプバッファ入れたい
         if (!context.started) return;
         if (isDead) return;
+        if (isKnockBacking) return;
 
         if (isGrounded)
         {
@@ -213,6 +227,11 @@ public class PlayerController : MonoBehaviour
 
     #region Animation Events
 
+    public void Anim_AttackStart()
+    {
+        SetIsAttacking(true);
+    }
+
     public void Anim_AttackEnd()
     {
         SetIsAttacking();
@@ -220,7 +239,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion
     
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector2 attackerPosition)
     {
         if (isInvincible) return;
         if (isDead) return;
@@ -234,9 +253,30 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        StartCoroutine(DamageSequence(attackerPosition));
+
+    }
+
+    private IEnumerator DamageSequence(Vector2 attackerPosition)
+    {
+        isInvincible = true;
+        isKnockBacking = true;
+
         animator.SetTrigger("Hit");
 
-        StartCoroutine(InvincibleCoroutine());
+        float dirX = transform.position.x >= attackerPosition.x ? 1f : -1f;
+
+        rb.linearVelocity = Vector2.zero;
+        rb.linearVelocity = new Vector2(dirX * knockBackXPower, knockBackYPower);
+
+        yield return new WaitForSeconds(knockBackControlLockTime);
+
+        RecoverFromHit();
+        
+        yield return new WaitForSeconds(invincibleTime);
+
+        rb.linearVelocity = Vector2.zero;
+        isInvincible = false;
     }
 
     IEnumerator InvincibleCoroutine()
@@ -259,7 +299,7 @@ public class PlayerController : MonoBehaviour
         Time.timeScale = 0.2f;
 
         // Dieアニメ再生
-        animator.SetTrigger("Die");
+        animator.SetBool("IsDead", true);
 
         yield return new WaitForSecondsRealtime(1f);
 
@@ -294,6 +334,11 @@ public class PlayerController : MonoBehaviour
     {
         this.isAttacking = isAttacking;
         animator.SetBool("IsAttacking", isAttacking);
+    }
+
+    public void RecoverFromHit()
+    {
+        isKnockBacking = false;
     }
 
     private void OnDrawGizmos()

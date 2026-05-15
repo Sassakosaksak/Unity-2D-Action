@@ -48,6 +48,9 @@ public class Enemy_Mushroom : BaseEnemyController
 
     protected override void Update()
     {
+        if (isDead) return;
+        if (isKnockBacking) return;
+        
         base.Update();
 
         attackTimer += Time.deltaTime;
@@ -87,9 +90,11 @@ public class Enemy_Mushroom : BaseEnemyController
         // ToDo:回遊にしたい
         //Vector2 dir = (player.position - transform.position).normalized;
         //rb.linearVelocity = new Vector2(dir.x * walkSpeed, rb.linearVelocityY);
+        Vector2 dir = (player.position - transform.position).normalized;
+        rb.linearVelocity = Vector2.zero;
 
         // プレイヤーとの距離が一定以下になったらRun
-        if (distance < detectRange)
+        if (distance < detectRange && attackTimer > attackCooldown)
         {
             ChangeState(State.Run);
         }
@@ -102,10 +107,10 @@ public class Enemy_Mushroom : BaseEnemyController
         // プレイヤー方向に移動
         FlipToPlayer();
         Vector2 dir = (player.position - transform.position).normalized;
-        rb.linearVelocity = new Vector2(dir.x * runSpeed, rb.linearVelocityY);
+        rb.linearVelocity = new Vector2(dir.x * runSpeed, 0f);
 
-        // 発見距離の2倍離れたらRun解除
-        if (distance > detectRange * 2f)
+        // 発見距離の1.2倍離れたらRun解除
+        if (distance > detectRange * 1.2f)
         {
             ChangeState(State.Idle);
             return;
@@ -169,12 +174,12 @@ public class Enemy_Mushroom : BaseEnemyController
     void Attack()
     {
         // 保持済みの方向で移動しながら攻撃
-        rb.linearVelocity = new Vector2(attackDirection * attackSpeed, rb.linearVelocityY);
-
+        rb.linearVelocity = new Vector2(attackDirection * attackSpeed, 0);
         // 確率で自身がスタン
         if (Random.value < stunPercentage)
         {
             ChangeState(State.Stun);
+            return;
         }
     }
 
@@ -236,15 +241,15 @@ public class Enemy_Mushroom : BaseEnemyController
     void CommonMoveSetting()
     {
         // 距離に応じてIdle or Runに戻る
-        float distance = GetDistanceToPlayer();
-        if (distance > detectRange)
-        {
+        //float distance = GetDistanceToPlayer();
+        //if (distance > detectRange)
+        //{
             ChangeState(State.Idle);
-        }
-        else
-        {
-            ChangeState(State.Run);
-        }
+        //}
+        //else
+        //{
+        //    ChangeState(State.Run);
+        //}
     }
 
     protected override void RecoverFromHit()
@@ -256,9 +261,7 @@ public class Enemy_Mushroom : BaseEnemyController
 
     public void SpawnSpore()
     {
-        Debug.Log("胞子発射！");
-
-        Vector2 dir = (player.position - transform.position).normalized;
+        Vector2 dir = rightFacing ? Vector2.right : Vector2.left;
 
         GameObject sporeObject = Instantiate(sporePrefab, firePoint.position, Quaternion.identity);
 

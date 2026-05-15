@@ -17,7 +17,7 @@ TagManager:
   - Player
   - Enemy
   - DeadPlayer
-  - 
+  - EnemyAttack
   - 
   - 
   - 
@@ -57,6 +57,9 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 1915993677
+    locked: 0
+  - name: EnemyAttack
+    uniqueID: 3216962155
     locked: 0
   m_RenderingLayers:
   - Default

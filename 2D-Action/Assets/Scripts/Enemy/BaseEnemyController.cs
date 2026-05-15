@@ -23,7 +23,7 @@ public class BaseEnemyController : MonoBehaviour
     [SerializeField]
     private float invincibleTime = 0.3f;
     [SerializeField]
-    private bool isKnockBacking = false;
+    protected bool isKnockBacking = false;
     [SerializeField]
     private float knockBackTime = 0.5f;
     [SerializeField]
@@ -128,10 +128,7 @@ public class BaseEnemyController : MonoBehaviour
         Vector2 direction =
             ((Vector2)transform.position - attackerPosition).normalized;
 
-        rb.linearVelocity = new Vector2(
-            direction.x * knockBackPower,
-            rb.linearVelocity.y
-        );
+        rb.linearVelocity = new Vector2(direction.x * knockBackPower, rb.linearVelocity.y);
         // é©ëRÇ»êÅÇ¡îÚÇ—Ç…Ç∑ÇÈÇΩÇﬂÇÃî{ó¶
         yield return new WaitForSeconds(knockBackTime);
 
@@ -158,7 +155,8 @@ public class BaseEnemyController : MonoBehaviour
         PlayerController player = playerObj.GetComponent<PlayerController>();
         if (player == null) return;
 
-        player.TakeDamage(bodyAttackDamage);
+        rb.linearVelocity = Vector2.zero;
+        player.TakeDamage(bodyAttackDamage, transform.position);
     }
 
     /// <summary>

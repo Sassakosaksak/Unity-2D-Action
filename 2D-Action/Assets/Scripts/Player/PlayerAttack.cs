@@ -14,9 +14,16 @@ public class PlayerAttack : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.TryGetComponent(out BaseEnemyController enemy))
         {
-            other.GetComponent<BaseEnemyController>()?.TakeDamage(attackPower, transform.position);
+            enemy.TakeDamage(attackPower, transform.position);
+            return;
+        }
+
+        if (other.TryGetComponent(out IBreakable breakable))
+        {
+            breakable.Break();
+            return;
         }
     }
 

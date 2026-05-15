@@ -7,6 +7,7 @@ public class BaseEnemyController : MonoBehaviour
     protected Transform player;
     protected Rigidbody2D rb;
     protected Animator animator;
+    protected AnimationEffectController animEffect;
 
     [Header("Status")]
     public int maxHP = 10;
@@ -46,6 +47,7 @@ public class BaseEnemyController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
+        animEffect = GetComponentInChildren<AnimationEffectController>();
     }
 
     protected virtual void Start()
@@ -98,7 +100,12 @@ public class BaseEnemyController : MonoBehaviour
         if (animator != null)
         {
             animator.SetTrigger("Hit");
+            animEffect.PlayHitFlash();
+            animEffect.PlayHitPunch();
+            animEffect.PlayInvincibleBlink();
+
             StartCoroutine(InvincibleCoroutine());
+            animEffect.StopInvincibleBlink();
         }
     }
 
@@ -110,6 +117,7 @@ public class BaseEnemyController : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero;
             animator.SetBool("IsDie", true);
+            animEffect.PlayHitShake();
         }
 
         // TODO:Dieアニメーション後にDestroyするように修正

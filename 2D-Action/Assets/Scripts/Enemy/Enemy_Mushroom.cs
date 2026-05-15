@@ -1,4 +1,5 @@
 using UnityEngine;
+using DG.Tweening;
 
 public class Enemy_Mushroom : BaseEnemyController
 {
@@ -164,6 +165,8 @@ public class Enemy_Mushroom : BaseEnemyController
     {
         rb.linearVelocity = Vector2.zero;
 
+        animEffect.PlayAttackWarning();
+
         if (animator != null)
         {
             // 攻撃方向の保持
@@ -185,6 +188,8 @@ public class Enemy_Mushroom : BaseEnemyController
 
     void ChangeState(State newState)
     {
+        animEffect.KillAllEffects();
+
         currentState = newState;
 
         switch (newState)

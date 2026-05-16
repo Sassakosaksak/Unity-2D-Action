@@ -92,6 +92,8 @@ public class PlayerController : MonoBehaviour
 
         currentHP = maxHP;
         hpBar.SetHP(currentHP, maxHP);
+
+        transform.localScale = new Vector2(rightFacing ? 1 : -1, 1);
     }
 
     void Update()

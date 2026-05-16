@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class EnemyBodyAttack : MonoBehaviour
 {
-    private BaseEnemyController enemy;
+    private EnemyControllerBase enemy;
 
     void Start()
     {
-        enemy = GetComponentInParent<BaseEnemyController>();
+        enemy = GetComponentInParent<EnemyControllerBase>();
 
         // TODO: 最終的に不要なら削除。ColliderのサイズはInspectorで各Prefabで設定しておく方が安全そう。
         //var colliderTouchArea = GetComponent<BoxCollider2D>();

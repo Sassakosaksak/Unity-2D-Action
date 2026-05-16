@@ -1,7 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class Enemy_Mushroom : BaseEnemyController
+public class Enemy_Mushroom : EnemyControllerBase
 {
     private enum State
     {

@@ -14,7 +14,7 @@ public class PlayerAttack : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent(out BaseEnemyController enemy))
+        if (other.TryGetComponent(out EnemyControllerBase enemy))
         {
             enemy.TakeDamage(attackPower, transform.position);
             return;

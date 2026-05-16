@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public abstract class BaseEnemyController : MonoBehaviour
+public abstract class EnemyControllerBase : MonoBehaviour
 {
     [Header("Reference")]
     protected Transform player;

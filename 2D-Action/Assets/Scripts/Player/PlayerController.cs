@@ -84,11 +84,15 @@ public class PlayerController : MonoBehaviour
         Die
     }
 
-    void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
         animEffect = GetComponent<AnimationEffectController>();
+    }
+
+    void Start()
+    {
 
         currentHP = maxHP;
         hpBar.SetHP(currentHP, maxHP);
@@ -366,6 +370,23 @@ public class PlayerController : MonoBehaviour
         isKnockBacking = false;
         isHit = false;
         animator.SetBool("IsHit", isHit);
+    }
+
+    /// <summary>
+    /// ムービー等の自動歩行用
+    /// </summary>
+    /// <param name="direction"></param>
+    public void Move(float direction)
+    {
+        rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
+    }
+
+    /// <summary>
+    /// ムービー等の自動歩行停止用
+    /// </summary>
+    public void Stop()
+    {
+        rb.linearVelocity = Vector2.zero;
     }
 
     private void OnDrawGizmos()

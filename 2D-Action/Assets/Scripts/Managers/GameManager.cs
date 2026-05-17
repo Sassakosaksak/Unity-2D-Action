@@ -11,8 +11,13 @@ public class GameManager : MonoBehaviour
     private GameObject gameOverUI;
     [SerializeField]
     private Image darkPanel;
+    [SerializeField]
+    private GameObject gameClearUI;
+    [SerializeField]
+    private Image clearPanel;
 
     private bool isGameOver = false;
+    private bool isGameClear = false;
 
     void Awake()
     {
@@ -29,17 +34,15 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         if (isGameOver) return;
-
         isGameOver = true;
+
+        CanvasGroup canvasGroup = gameOverUI.GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 0f;
 
         gameOverUI.SetActive(true);
 
         darkPanel.DOFade(0.7f, 1f);
 
-        //Time.timeScale = 0f;
-
-        CanvasGroup canvasGroup = gameOverUI.GetComponent<CanvasGroup>();
-        canvasGroup.alpha = 0f;
         canvasGroup.DOFade(1f, 1f)
                    .SetDelay(0.5f)
                    .SetUpdate(true);
@@ -50,5 +53,26 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void GameClear()
+    {
+        if (isGameClear) return;
+        isGameClear = true;
+
+        CanvasGroup canvasGroup = gameClearUI.GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 0f;
+
+        gameClearUI.SetActive(true);
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(clearPanel.DOFade(0.2f, 3f))
+           .AppendCallback(() =>
+           {
+               canvasGroup.alpha = 1f;
+           })
+           .SetUpdate(true);
+
+        Time.timeScale = 0f;
     }
 }

@@ -21,16 +21,20 @@ public class TutorialStageFlow : StageFlowBase
     private GameObject enemyGroup;
     [SerializeField]
     private GameObject goal;
+    [SerializeField]
+    private GameObject playerMessageGroup;
 
     private PlayerController playerController;
     private Rigidbody2D playerRb;
     private Animator playerAnimator;
+    private PlayerMessageUI playerMessageUI;
 
     protected override void OnStageStart()
     {
         playerController = player.GetComponent<PlayerController>();
         playerRb = player.GetComponent<Rigidbody2D>();
         playerAnimator = player.GetComponentInChildren<Animator>();
+        playerMessageUI = playerMessageGroup.GetComponentInChildren<PlayerMessageUI>();
 
         StartCoroutine(StartSequence());
     }
@@ -55,32 +59,45 @@ public class TutorialStageFlow : StageFlowBase
     private IEnumerator StartSequence()
     {
         // 操作OFF
-        playerController.enabled = false;
+        playerController.SetInputEnabled(false);
 
         // 右から左に移動
         //playerAnimator.SetTrigger // Speedでanimator勝手にRunになるはず、ならなかったらTriggerとかつける
-        playerController.Move(-0.4f);
+        playerController.AutoMove(-0.4f);
         //TODO:トリガーとかで動きとめる形に変更
         yield return new WaitForSeconds(2f);
-        playerController.Stop();
+        playerController.AutoMoveStop();
 
         // TODO:お宝見つけるぞの意気込みエモートを挿入
 
         yield return new WaitForSeconds(1f);
 
         // 操作ON
-        playerController.enabled = true;
+        playerController.SetInputEnabled(true);
     }
 
     public void OnChestOpened()
     {
         enemyGroup.SetActive(true);
         goal.SetActive(true);
+
+        StartCoroutine(ChestOpenedSequence());
     }
 
     protected override void OnStageClear()
     {
         StartCoroutine(ClearSequence());
+    }
+
+    private IEnumerator ChestOpenedSequence()
+    {
+        playerController.SetInputEnabled(false);
+
+        yield return new WaitForSeconds(2f);
+
+        playerMessageUI.ShowMessage("空っぽだ……。");
+
+        playerController.SetInputEnabled(true);
     }
 
     private IEnumerator ClearSequence()
@@ -89,12 +106,12 @@ public class TutorialStageFlow : StageFlowBase
         goal.SetActive(false);
 
         // 操作OFF
-        playerController.enabled = false;
+        playerController.SetInputEnabled(false);
 
         // 右へ走り抜ける
-        playerController.Move(1f);
+        playerController.AutoMove(1f);
         yield return new WaitForSeconds(2f);
-        playerController.Stop();
+        playerController.AutoMoveStop();
 
         // クリアUI表示
         GameManager.Instance.GameClear();

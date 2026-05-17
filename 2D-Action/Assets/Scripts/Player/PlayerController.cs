@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool rightFacing = true;
     private bool isKnockBacking = false;
+    private bool isAutoMoving = false;
+    private float autoMoveDirection = 1f;
+    private bool canInput = true;
 
     private State currentState;
 
@@ -152,7 +155,8 @@ public class PlayerController : MonoBehaviour
     private void CulcPlayerSpeed()
     {
         // 入力値
-        float move = moveInput.x;
+        float move = isAutoMoving ? autoMoveDirection : moveInput.x;
+        //float move = moveInput.x;
 
         // 小さい値を0に（ブレ防止）
         if (Mathf.Abs(move) < 0.1f) move = 0f;
@@ -201,6 +205,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (!canInput) return;
         if (isDead) return;
         moveInput = context.ReadValue<Vector2>();
 
@@ -219,6 +224,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnAttack(InputAction.CallbackContext context)
     {
+        if (!canInput) return;
         if (isDead) return;
         if (isKnockBacking) return;
 
@@ -232,6 +238,7 @@ public class PlayerController : MonoBehaviour
     public void OnJump(InputAction.CallbackContext context)
     {
         // TODO：コヨーテタイム、ジャンプバッファ入れたい
+        if (!canInput) return; 
         if (!context.started) return;
         if (isDead) return;
         if (isKnockBacking) return;
@@ -376,17 +383,34 @@ public class PlayerController : MonoBehaviour
     /// ムービー等の自動歩行用
     /// </summary>
     /// <param name="direction"></param>
-    public void Move(float direction)
+    public void AutoMove(float direction)
     {
-        rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
+        isAutoMoving = true;
+        autoMoveDirection = Mathf.Clamp(direction, -1f, 1f);
     }
 
     /// <summary>
     /// ムービー等の自動歩行停止用
     /// </summary>
-    public void Stop()
+    public void AutoMoveStop()
     {
+        isAutoMoving = false;
+        autoMoveDirection = 0f;
         rb.linearVelocity = Vector2.zero;
+    }
+
+    /// <summary>
+    /// ムービーなどで入力出来ないようにする
+    /// </summary>
+    /// <param name="enabled">true:入力可、false:入力不可</param>
+    public void SetInputEnabled(bool enabled)
+    {
+        canInput = enabled;
+
+        if (!enabled)
+        {
+            moveInput = Vector2.zero;
+        }
     }
 
     private void OnDrawGizmos()

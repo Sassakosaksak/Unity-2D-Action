@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
         gameClearUI.SetActive(true);
 
         Sequence seq = DOTween.Sequence();
-        seq.Append(clearPanel.DOFade(0.2f, 3f))
+        seq.Append(clearPanel.DOFade(0.2f, 2f))
            .AppendCallback(() =>
            {
                canvasGroup.alpha = 1f;

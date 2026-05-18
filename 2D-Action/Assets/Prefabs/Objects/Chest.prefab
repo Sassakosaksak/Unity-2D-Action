@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4431906142231825172}
   - component: {fileID: 5386958377710972102}
   - component: {fileID: 6640921565914577728}
+  - component: {fileID: 580178634124598731}
   m_Layer: 0
   m_Name: Chest
   m_TagString: Untagged
@@ -28,11 +29,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3894629917146274525}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.04, y: -2.69, z: 0}
   m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1584010768330821774}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1008343791716119046
@@ -172,3 +174,124 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1008343791716119046}
   openEffectPrefab: {fileID: 4561942856852828439, guid: f887b00400880a448a0ecd05188f02e4, type: 3}
+  openParticle: {fileID: 2696683015656329594}
+--- !u!114 &580178634124598731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3894629917146274525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_Priority: 0
+  m_ComponentVersion: 5
+  m_HasRenderer: 1
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_AlphaCutoff: 0.1
+  m_ApplyToSortingLayers: 00000000edd80a076742c60f9d35451b1b6be0874dbe33726bf2bebf1d5dba38
+  m_ShapePath:
+  - {x: -0.90625, y: -0.65625, z: 0}
+  - {x: -0.90625, y: 0.65624976, z: 0}
+  - {x: 0.90625, y: 0.65624976, z: 0}
+  - {x: 0.90625, y: -0.65625, z: 0}
+  m_ShapePathHash: 0
+  m_InstanceId: 0
+  m_ShadowShape2DComponent: {fileID: 5386958377710972102}
+  m_ShadowShape2DProvider:
+    rid: 9058705194116972639
+  m_ShadowCastingSource: 2
+  m_ShadowMesh:
+    m_Mesh: {fileID: 0}
+    m_LocalBounds:
+      m_Center: {x: -0.0063476562, y: 0.1203537, z: 0}
+      m_Extent: {x: 0.7530823, y: 0.4838028, z: 0}
+    m_EdgeProcessing: 1
+    m_TrimEdge: 0.24
+    m_FlipX: 0
+    m_FlipY: 0
+    m_InitialTrim: 0
+  m_CastingOption: 1
+  m_PreviousTrimEdge: 0.24
+  m_PreviousEdgeProcessing: 1
+  m_PreviousShadowCastingSource: 2
+  m_PreviousShadowShape2DSource: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 9058705194116972639
+      type: {class: ShadowShape2DProvider_Collider2D, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+      data: 
+--- !u!1001 &4186593825306281947
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7560186746674800452}
+    m_Modifications:
+    - target: {fileID: 267473204309871176, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_Name
+      value: ChestOpenParticle
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+--- !u!4 &1584010768330821774 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3450405483900901205, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+  m_PrefabInstance: {fileID: 4186593825306281947}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &2696683015656329594 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2266803806605924001, guid: 59a2234403ef350469db777a2721cd41, type: 3}
+  m_PrefabInstance: {fileID: 4186593825306281947}
+  m_PrefabAsset: {fileID: 0}

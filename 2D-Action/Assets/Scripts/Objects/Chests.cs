@@ -7,6 +7,8 @@ public class Chest : MonoBehaviour, IBreakable
     private Animator animator;
     [SerializeField]
     private GameObject openEffectPrefab;
+    [SerializeField] 
+    private ParticleSystem openParticle;
     private Collider2D col;
 
 
@@ -49,5 +51,7 @@ public class Chest : MonoBehaviour, IBreakable
         Vector3 spawnPos = col.bounds.center + new Vector3(col.bounds.extents.x * 0.5f , col.bounds.extents.y * 1.25f);
 
         Instantiate(openEffectPrefab, spawnPos, Quaternion.identity);
+
+        openParticle.Play();
     }
 }

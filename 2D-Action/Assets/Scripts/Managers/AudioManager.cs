@@ -13,6 +13,12 @@ public class AudioManager : MonoBehaviour
     [SerializeField]
     private AudioSource seSource;
 
+    [Header("Filter")]
+    [SerializeField]
+    private AudioLowPassFilter lowPassFilter;
+    [SerializeField]
+    private float defaultLowPassCutoffFrequency = 22000f;
+
     [Header("Volume")]
     [SerializeField]
     private float bgmVolume = 0.5f;
@@ -23,6 +29,7 @@ public class AudioManager : MonoBehaviour
 
     private Tween bgmTween;
     private Tween ambientTween;
+    private Tween lowPassTween;
 
     private void Awake()
     {
@@ -90,4 +97,35 @@ public class AudioManager : MonoBehaviour
     {
         ambientSource.Stop();
     }
+
+    public void ChangeLowPassCutoffFrequency(float cutoffFrequency)
+    {
+        if (lowPassFilter == null) return;
+        
+        // ñ¢ê›íË(-1)éû
+        float targetFrequency = cutoffFrequency < 0f
+                                ? defaultLowPassCutoffFrequency
+                                : cutoffFrequency;
+
+        lowPassTween?.Kill();
+
+        lowPassTween = DOTween.To(
+            () => lowPassFilter.cutoffFrequency,
+            value =>
+            {
+                if (lowPassFilter != null)
+                {
+                    lowPassFilter.cutoffFrequency = value;
+                }
+            },
+            targetFrequency,
+            fadeDuration
+        );
+    }
+
+    public void ResetLowPassCutoffFrequency()
+    {
+        ChangeLowPassCutoffFrequency(defaultLowPassCutoffFrequency);
+    }
+
 }

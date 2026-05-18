@@ -53,13 +53,13 @@ public class AnimationEffectController : MonoBehaviour
 
     public void PlayHitFlash()
     {
-        spriteRenderer.DOColor(Color.white, 0.05f)
-                      .SetLoops(2, LoopType.Yoyo);
+        spriteRenderer.DOColor(new Color(1f, 0.5f, 0.5f), 0.1f)
+                      .SetLoops(3, LoopType.Yoyo);
     }
 
     public void PlayHitShake()
     {
-        transform.DOShakePosition(0.15f, 0.15f);
+        transform.DOShakePosition(0.2f, 0.2f);
     }
 
     public void PlayHitPunch()

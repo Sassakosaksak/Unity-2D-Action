@@ -6,6 +6,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
     [Header("Reference")]
     protected Transform player;
     protected Rigidbody2D rb;
+    protected Collider2D col;
     protected Animator animator;
     protected AnimationEffectController animEffect;
 
@@ -46,6 +47,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
         animator = GetComponentInChildren<Animator>();
         animEffect = GetComponentInChildren<AnimationEffectController>();
     }
@@ -102,10 +104,8 @@ public abstract class EnemyControllerBase : MonoBehaviour
             animator.SetTrigger("Hit");
             animEffect.PlayHitFlash();
             animEffect.PlayHitPunch();
-            animEffect.PlayInvincibleBlink();
 
             StartCoroutine(InvincibleCoroutine());
-            animEffect.StopInvincibleBlink();
         }
     }
 
@@ -117,6 +117,8 @@ public abstract class EnemyControllerBase : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero;
             animator.SetBool("IsDie", true);
+            animEffect.PlayHitFlash();
+            animEffect.PlayHitPunch();
             animEffect.PlayHitShake();
         }
 
@@ -145,10 +147,17 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
         RecoverFromHit();
     }
+
     protected virtual IEnumerator InvincibleCoroutine()
     {
         isInvincible = true;
+
+        animEffect.PlayInvincibleBlink();
+
         yield return new WaitForSeconds(invincibleTime);
+
+        animEffect.StopInvincibleBlink();
+
         isInvincible = false;
     }
 

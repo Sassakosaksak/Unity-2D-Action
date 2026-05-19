@@ -119,7 +119,6 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     protected virtual void Die()
     {
-        Debug.Log($"Disable collider: {bodyAttackCol.name}", bodyAttackCol);
         isDead = true;
         bodyAttackCol.enabled = false;
 

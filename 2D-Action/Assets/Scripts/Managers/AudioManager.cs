@@ -10,8 +10,6 @@ public class AudioManager : MonoBehaviour
     private AudioSource bgmSource;
     [SerializeField]
     private AudioSource ambientSource;
-    [SerializeField]
-    private AudioSource seSource;
 
     [Header("Filter")]
     [SerializeField]
@@ -80,12 +78,6 @@ public class AudioManager : MonoBehaviour
                                   ambientSource.Play();
                               })
                               .Append(ambientSource.DOFade(ambientVolume, fadeDuration));
-    }
-
-    public void PlaySE(AudioClip clip)
-    {
-        if (clip == null) return;
-        seSource.PlayOneShot(clip);
     }
 
     public void StopBGM()

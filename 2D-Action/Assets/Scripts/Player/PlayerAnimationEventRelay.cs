@@ -12,14 +12,14 @@ public class PlayerAnimationEventRelay : MonoBehaviour
         playerAttack = GetComponentInChildren<PlayerAttack>();
     }
 
-    //public void DieEnd()
-    //{
-    //    player.Anim_DieEnd();
-    //}
-
     public void AttackStart()
     {
         player.Anim_AttackStart();
+    }
+
+    public void AttackSE()
+    {
+        player.PlayAttackSE();
     }
 
     public void AttackEnd()

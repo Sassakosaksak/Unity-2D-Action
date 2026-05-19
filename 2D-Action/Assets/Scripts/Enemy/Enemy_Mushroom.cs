@@ -164,7 +164,6 @@ public class Enemy_Mushroom : EnemyControllerBase
     public void Anim_StunEnd()
     {
         if (animator != null) animator.SetBool("IsStun", false);
-        Debug.Log(animator.GetBool("IsStun"));
         CommonMoveSetting();
     }
 

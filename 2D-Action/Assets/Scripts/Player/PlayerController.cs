@@ -6,8 +6,12 @@ using DG.Tweening;
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
-    Animator animator;
     AnimationEffectController animEffect;
+    [SerializeField]
+    Animator animator;
+    [SerializeField]
+    PlayerGroundSensor groundSensor;
+
     Vector2 moveInput;
 
     [Header("ステータス関連")]
@@ -72,6 +76,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField] 
     private float knockBackControlLockTime = 0.25f;
 
+    [Header("SE")]
+    [SerializeField]
+    private AudioClip attackSE;
+    [SerializeField]
+    private AudioClip jumpSE;
+    [SerializeField]
+    private AudioClip walkSE;
+    [SerializeField]
+    private AudioClip damageSE;
+    [SerializeField]
+    private AudioClip damageVoiceSE;
+    [SerializeField]
+    private AudioClip deathVoiceSE;
+
+
     [ContextMenu("Die")]
     private void DebugDie()
     {
@@ -90,8 +109,11 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponentInChildren<Animator>();
         animEffect = GetComponent<AnimationEffectController>();
+        // デバッグ用
+        animator = GetComponentInChildren<Animator>();
+        //surfaceCheck = GetComponentInChildren<PlayerSurfaceCheck>();
+        //groundSensor = GetComponentInChildren<PlayerGroundSensor>();
     }
 
     void Start()
@@ -108,7 +130,7 @@ public class PlayerController : MonoBehaviour
         if (isDead) return;
         if (isKnockBacking) return;
 
-        CheckGround();
+        isGrounded = groundSensor.IsGrounded;
 
         // アニメ
         animator.SetFloat("HorizontalSpeed", Mathf.Abs(rb.linearVelocity.x));
@@ -298,7 +320,28 @@ public class PlayerController : MonoBehaviour
         float dirX = transform.position.x >= attackerPosition.x ? 1f : -1f;
 
         rb.linearVelocity = Vector2.zero;
-        rb.linearVelocity = new Vector2(dirX * knockBackXPower, knockBackYPower);
+        //rb.linearVelocity = new Vector2(dirX * knockBackXPower, knockBackYPower);
+
+        // TODO:異常なノックバックあったので、検知用。不要になったら消す
+        Vector2 knockBackVelocity = new Vector2(
+            dirX * knockBackXPower,
+            knockBackYPower
+        );
+
+        if (knockBackVelocity.magnitude > 10f)
+        {
+            Debug.LogError(
+                $"[DamageSequence 異常ノックバック] " +
+                $"knockBackVelocity={knockBackVelocity}, " +
+                $"magnitude={knockBackVelocity.magnitude}, " +
+                $"playerPos={transform.position}, " +
+                $"attackerPos={attackerPosition}, " +
+                $"knockBackXPower={knockBackXPower}, " +
+                $"knockBackYPower={knockBackYPower}"
+            );
+        }
+
+        rb.linearVelocity = knockBackVelocity;
 
         yield return new WaitForSeconds(knockBackControlLockTime);
 
@@ -306,7 +349,7 @@ public class PlayerController : MonoBehaviour
         
         yield return new WaitForSeconds(invincibleTime - knockBackControlLockTime);
 
-        rb.linearVelocity = Vector2.zero;
+        //rb.linearVelocity = Vector2.zero;
         isInvincible = false;
 
         animEffect.StopInvincibleBlink();
@@ -352,18 +395,6 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         //rb.simulated = false;
         StartCoroutine(DieSequence());
-    }
-
-    private void CheckGround()
-    {
-        isGrounded = Physics2D.BoxCast(
-            groundCheck.position,
-            groundCheckSize,
-            0f,
-            Vector2.down,
-            groundCheckDistance,
-            groundLayer
-        );
     }
 
     private void SetIsAttacking(bool isAttacking = false)
@@ -413,14 +444,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    #region PlaySE
+
+    public void PlayAttackSE()
     {
-        if (groundCheck == null) return;
-
-        Gizmos.color = Color.red;
-
-        Vector2 boxCenter = (Vector2)groundCheck.position + Vector2.down * groundCheckDistance;
-
-        Gizmos.DrawWireCube(boxCenter, groundCheckSize);
+        SEManager.Instance.Play(attackSE);
     }
+
+    #endregion
 }

@@ -47,14 +47,14 @@ public class Spore : MonoBehaviour, IBreakable
             {
                 player.TakeDamage(sporeDamage, transform.position);
             }
-            Destroy(gameObject, 0.8f);
+            Break();
             return;
         }
 
         // ínñ Ç∆è’ìÀ
         if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            Destroy(gameObject, 0.8f);
+            Break();
             return;
         }
     }

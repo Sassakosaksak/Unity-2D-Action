@@ -132,6 +132,11 @@ MonoBehaviour:
   isKnockBacking: 0
   knockBackTime: 0.5
   knockBackDecay: 0.9
+  separationRadius: 0.25
+  separationPower: 1
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
   Level: 1
   detectRange: 4
   walkSpeed: 0.5

@@ -36,6 +36,14 @@ public abstract class EnemyControllerBase : MonoBehaviour
     protected bool isMove = false;
     protected bool isInvincible = false;
 
+    [Header("Collision of Between Enemies")]
+    [SerializeField]
+    private float separationRadius = 0.5f;
+    [SerializeField]
+    private float separationPower = 1.5f;
+    [SerializeField]
+    private LayerMask enemyLayer;
+
 
     /// <summary>
     /// キャラクターのレベル
@@ -238,5 +246,27 @@ public abstract class EnemyControllerBase : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
 
         yield return new WaitForSeconds(sec);
+    }
+
+    protected Vector2 GetSeparationVelocity()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, separationRadius, enemyLayer);
+
+        Vector2 force = Vector2.zero;
+
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject == gameObject) continue;
+
+            Vector2 diff = (Vector2)(transform.position - hit.transform.position);
+            float distance = diff.magnitude;
+
+            // 0除算回避
+            if (distance <= 0.01f) continue;
+
+            force += diff.normalized / distance;
+        }
+
+        return force * separationPower;
     }
 }

@@ -13,7 +13,7 @@ public class Enemy_Mushroom : EnemyControllerBase
         Die
     }
 
-    [Header("行動設定")]
+    [Header("Move")]
     [SerializeField]
     private float detectRange = 4f;
     [SerializeField]
@@ -22,13 +22,18 @@ public class Enemy_Mushroom : EnemyControllerBase
     private float runSpeed = 1.5f;
     [SerializeField]
     private float attackSpeed = 1f;
+
+    [Header("Combat")]
     [SerializeField]
     private float attackRange = 1.5f;
     [SerializeField]
     private float attackCooldown = 2f;
     [SerializeField]
     private float stunPercentage = 0.25f;
+    [SerializeField]
+    private float attackRangeIncreaseSpeed = 0.5f;
 
+    private float currentAttackRangeBonus;
     [SerializeField]
     private GameObject sporePrefab;
     [SerializeField]
@@ -107,8 +112,14 @@ public class Enemy_Mushroom : EnemyControllerBase
 
         // プレイヤー方向に移動
         FlipToPlayer();
+
+        currentAttackRangeBonus += attackRangeIncreaseSpeed * Time.deltaTime;
+        currentAttackRangeBonus = Mathf.Min(currentAttackRangeBonus, detectRange);
+        float currentAttackRange = attackRange + currentAttackRangeBonus;
+
         Vector2 dir = (player.position - transform.position).normalized;
-        rb.linearVelocity = new Vector2(dir.x * runSpeed, 0f);
+        Vector2 separation = GetSeparationVelocity();
+        rb.linearVelocity = new Vector2(dir.x * runSpeed + separation.x, 0f);
 
         // 発見距離の1.2倍離れたらRun解除
         if (distance > detectRange * 1.2f)
@@ -118,7 +129,7 @@ public class Enemy_Mushroom : EnemyControllerBase
         }
 
         // 攻撃距離内 かつ クールダウン経過後
-        if (distance < attackRange && attackTimer > attackCooldown)
+        if (distance < currentAttackRange && attackTimer > attackCooldown)
         {
             ChangeState(State.PrepareAttack);
         }
@@ -148,8 +159,6 @@ public class Enemy_Mushroom : EnemyControllerBase
     public void Anim_StunStart()
     {
         rb.linearVelocity = Vector2.zero;
-        Debug.Log("Stunした");
-
     }
 
     public void Anim_StunEnd()
@@ -206,6 +215,7 @@ public class Enemy_Mushroom : EnemyControllerBase
                 break;
 
             case State.Run:
+                ResetAttackRangeBonus(); 
                 if (animator != null) animator.SetBool("IsDetect", true);
                 // 処理はUpdate内
                 break;
@@ -273,5 +283,8 @@ public class Enemy_Mushroom : EnemyControllerBase
         Spore spore = sporeObject.GetComponent<Spore>();
         spore.Init(dir, Level);
     }
-
+    private void ResetAttackRangeBonus()
+    {
+        currentAttackRangeBonus = 0f;
+    }
 }

@@ -6,9 +6,10 @@ public abstract class EnemyControllerBase : MonoBehaviour
     [Header("Reference")]
     protected Transform player;
     protected Rigidbody2D rb;
-    protected Collider2D col;
     protected Animator animator;
     protected AnimationEffectController animEffect;
+    [SerializeField]
+    protected Collider2D bodyAttackCol;
 
     [Header("Status")]
     public int maxHP = 10;
@@ -47,7 +48,6 @@ public abstract class EnemyControllerBase : MonoBehaviour
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
         animator = GetComponentInChildren<Animator>();
         animEffect = GetComponentInChildren<AnimationEffectController>();
     }
@@ -111,7 +111,9 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     protected virtual void Die()
     {
+        Debug.Log($"Disable collider: {bodyAttackCol.name}", bodyAttackCol);
         isDead = true;
+        bodyAttackCol.enabled = false;
 
         if (animator != null)
         {

@@ -76,21 +76,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] 
     private float knockBackControlLockTime = 0.25f;
 
-    [Header("SE")]
-    [SerializeField]
-    private AudioClip attackSE;
-    [SerializeField]
-    private AudioClip jumpSE;
-    [SerializeField]
-    private AudioClip walkSE;
-    [SerializeField]
-    private AudioClip damageSE;
-    [SerializeField]
-    private AudioClip damageVoiceSE;
-    [SerializeField]
-    private AudioClip deathVoiceSE;
-
-
     [ContextMenu("Die")]
     private void DebugDie()
     {
@@ -443,13 +428,4 @@ public class PlayerController : MonoBehaviour
             moveInput = Vector2.zero;
         }
     }
-
-    #region PlaySE
-
-    public void PlayAttackSE()
-    {
-        SEManager.Instance.Play(attackSE);
-    }
-
-    #endregion
 }

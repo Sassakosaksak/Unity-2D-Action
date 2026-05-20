@@ -17,8 +17,7 @@ public class SurfaceMaterial : MonoBehaviour
 
     public bool HasTile(Vector3 worldPosition)
     {
-        Vector3Int cellPosition =
-            tilemap.WorldToCell(worldPosition);
+        Vector3Int cellPosition = tilemap.WorldToCell(worldPosition);
 
         return tilemap.HasTile(cellPosition);
     }

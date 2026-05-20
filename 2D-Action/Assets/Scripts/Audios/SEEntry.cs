@@ -1,16 +1,22 @@
 using UnityEngine;
 
-public class SEEntry : MonoBehaviour
+[System.Serializable]
+public class SEEntry
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    [Tooltip("•¡”‚Ìê‡ƒ‰ƒ“ƒ_ƒ€Ä¶")]
+    private AudioClip[] clips;
+    public AudioClip[] Clips => clips;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField]
+    private float volume = 1f;
+    public float Volume => volume;
+
+    [SerializeField]
+    private bool isPitchRandom = false;
+    public bool IsPitchRandom => isPitchRandom;
+
+    [SerializeField]
+    private Vector2 pitchRange = new(0.95f, 1.05f);
+    public Vector2 PitchRange => pitchRange;
 }

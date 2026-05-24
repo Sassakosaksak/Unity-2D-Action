@@ -9,6 +9,9 @@ public abstract class EnemyControllerBase : MonoBehaviour
     protected Animator animator;
     protected AnimationEffectController animEffect;
     [SerializeField]
+    [Tooltip("各エネミーのSEControllerを設定")]
+    protected EnemyBaseSEController enemyBaseSEController;
+    [SerializeField]
     protected Collider2D bodyAttackCol;
 
     [Header("Status")]
@@ -93,6 +96,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
         if (isDead) return;
         if (isInvincible) return;
 
+        enemyBaseSEController.PlayHit();
         currentHP -= damage;
         KnockBack(attackerPosition);
 
@@ -121,6 +125,8 @@ public abstract class EnemyControllerBase : MonoBehaviour
     {
         isDead = true;
         bodyAttackCol.enabled = false;
+
+        enemyBaseSEController.PlayDie();
 
         if (animator != null)
         {

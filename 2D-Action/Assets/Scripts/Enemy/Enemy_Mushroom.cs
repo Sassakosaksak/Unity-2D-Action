@@ -39,11 +39,24 @@ public class Enemy_Mushroom : EnemyControllerBase
     [SerializeField]
     private Transform firePoint;
 
+    [Header("SE")]
+    [SerializeField]
+    private float detectSECooldown = 3f;
+
+    private float lastDetectSETime = -999f;
+    private MushroomSEController mushroomSE;
+
     private State currentState;
     private float attackTimer;
     private float attackDirection;
 
     private bool hasInitialized = true;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        mushroomSE = GetComponent<MushroomSEController>();
+    }
 
     protected override void Start()
     {
@@ -216,6 +229,13 @@ public class Enemy_Mushroom : EnemyControllerBase
             case State.Run:
                 ResetAttackRangeBonus(); 
                 if (animator != null) animator.SetBool("IsDetect", true);
+
+                float currentTime = Time.time;
+                if(currentTime > lastDetectSETime + detectSECooldown)
+                {
+                    mushroomSE.PlayDetect();
+                    lastDetectSETime = currentTime;
+                }
                 // 処理はUpdate内
                 break;
 

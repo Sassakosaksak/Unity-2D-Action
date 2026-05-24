@@ -18,10 +18,18 @@ public class EnemyBodyAttack : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        // プレイヤーに接触ダメージ
-        if (collision.CompareTag("Player"))
+        if (!collision.CompareTag("HurtBox"))
         {
-            enemy.BodyAttack(collision.gameObject);
+            return;
         }
+
+        PlayerController player = collision.GetComponentInParent<PlayerController>();
+
+        if (player == null)
+        {
+            return;
+        }
+
+        enemy.BodyAttack(player);
     }
 }

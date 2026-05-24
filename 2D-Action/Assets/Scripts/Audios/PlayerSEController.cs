@@ -95,8 +95,8 @@ public class PlayerSEController : MonoBehaviour
 
     public void PlayDamage()
     {
-        //SE.Play(damage);
-        //SE.Play(damageVoice);
+        SE.Play(damage);
+        SE.Play(damageVoice);
     }
 
     public void PlayDeath()

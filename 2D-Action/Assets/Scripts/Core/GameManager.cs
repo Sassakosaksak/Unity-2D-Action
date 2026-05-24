@@ -19,6 +19,12 @@ public class GameManager : MonoBehaviour
     private bool isGameOver = false;
     private bool isGameClear = false;
 
+    [ContextMenu("Reset")]
+    private void DebugDie()
+    {
+        Retry();    
+    }
+
     void Awake()
     {
         if (Instance == null)

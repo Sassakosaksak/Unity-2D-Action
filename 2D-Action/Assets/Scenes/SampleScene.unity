@@ -1858,7 +1858,7 @@ MonoBehaviour:
   damage:
     clips:
     - {fileID: 8300000, guid: 2a214e22049446a42a885b49709a84e6, type: 3}
-    volume: 0.8
+    volume: 1.5
     isPitchRandom: 1
     pitchRange: {x: 0.95, y: 1.05}
   damageVoice:

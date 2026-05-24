@@ -221,6 +221,8 @@ MonoBehaviour:
     volume: 1
     isPitchRandom: 0
     pitchRange: {x: 0.95, y: 1.05}
+  audibleDistanceFromCamera: 10
+  fadeTime: 0.2
 --- !u!82 &6366251714442253524
 AudioSource:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ public class Chest : MonoBehaviour, IBreakable
     [SerializeField] 
     private ParticleSystem openParticle;
     private Collider2D col;
+    private ChestSEController sEController;
 
 
     public event Action Opened;
@@ -28,6 +29,7 @@ public class Chest : MonoBehaviour, IBreakable
     private void Awake()
     {
         col = GetComponent<Collider2D>();
+        sEController = GetComponent<ChestSEController>();
     }
 
     public void Break()
@@ -40,6 +42,7 @@ public class Chest : MonoBehaviour, IBreakable
         if (isOpened) return;
 
         isOpened = true;
+        sEController.PlayOpen();
         animator.SetTrigger("Open");
 
         Opened?.Invoke();
@@ -53,5 +56,10 @@ public class Chest : MonoBehaviour, IBreakable
         Instantiate(openEffectPrefab, spawnPos, Quaternion.identity);
 
         openParticle.Play();
+    }
+
+    public void PlayEmptySE()
+    {
+        sEController.PlayEmpty();
     }
 }

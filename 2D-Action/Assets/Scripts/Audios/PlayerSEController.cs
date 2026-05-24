@@ -43,13 +43,14 @@ public class PlayerSEController : MonoBehaviour
         groundSensor = GetComponentInChildren<PlayerGroundSensor>();
     }
 
-    public void PlaySwordSwing()
-    {
-        SE.Play(swordSwing);
-    }
     private void Update()
     {
         CheckLandSE();
+    }
+
+    public void PlaySwordSwing()
+    {
+        SE.Play(swordSwing);
     }
 
     public void PlayFootstep()

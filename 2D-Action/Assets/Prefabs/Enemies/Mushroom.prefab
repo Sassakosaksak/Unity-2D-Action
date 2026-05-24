@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1620327379731644909}
   - component: {fileID: 2931290008074321865}
   - component: {fileID: 2493920112807605110}
+  - component: {fileID: 3105087002127128486}
   m_Layer: 8
   m_Name: Mushroom
   m_TagString: Enemy
@@ -122,6 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f0c55b33fb168542a145a07321d9b86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyBaseSEController: {fileID: 3105087002127128486}
   bodyAttackCol: {fileID: 6427356030425311120}
   maxHP: 5
   currentHP: 0
@@ -148,6 +150,7 @@ MonoBehaviour:
   attackRangeIncreaseSpeed: 0.5
   sporePrefab: {fileID: 3576420105507369818, guid: cf3379706e259c541b007c5fca5e79f3, type: 3}
   firePoint: {fileID: 4461723615051638905}
+  detectSECooldown: 3
 --- !u!114 &2493920112807605110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,6 +164,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 4839460020545703270}
+--- !u!114 &3105087002127128486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5070685513029764848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9ed60fc76f25264ebf4d0069f3b26bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hit:
+    clips:
+    - {fileID: 8300000, guid: cb09c5fa7a77de745a0bea9b375d54a2, type: 3}
+    - {fileID: 8300000, guid: ec2c9831087f7254b8169be40148c3f3, type: 3}
+    volume: 1.8
+    isPitchRandom: 1
+    pitchRange: {x: 1.3, y: 1.4}
+  detectVoice:
+    clips:
+    - {fileID: 8300000, guid: 7f5b7d858be44724db0ef862b0ebd384, type: 3}
+    volume: 2
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
+  damageVoice:
+    clips:
+    - {fileID: 8300000, guid: 2aa74aa314f18c143b4d8a2e911e613c, type: 3}
+    volume: 0.5
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
+  deathVoice:
+    clips:
+    - {fileID: 8300000, guid: a207b604dfee01e46bbcd04b4724f639, type: 3}
+    volume: 1
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
 --- !u!1 &5668425399444496757
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,7 +429,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eed9d0c26a8fef46b4751dbffd672ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyBodyCollider: {fileID: 1620327379731644909}
 --- !u!1 &7346639845243646944
 GameObject:
   m_ObjectHideFlags: 0

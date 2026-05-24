@@ -12,6 +12,7 @@ public class Spore : MonoBehaviour, IBreakable
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+    private SporeSEController sporeSEController;
 
     [SerializeField]
     private Transform visual;
@@ -22,10 +23,12 @@ public class Spore : MonoBehaviour, IBreakable
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = visual.GetComponent<SpriteRenderer>();
+        sporeSEController = GetComponent<SporeSEController>();
     }
 
     private void Start()
     {
+        sporeSEController.PlayDrift();
         Destroy(gameObject, lifeTime);
     }
 
@@ -67,6 +70,8 @@ public class Spore : MonoBehaviour, IBreakable
 
         rb.linearVelocity = Vector2.zero;
 
+        sporeSEController.StopDrift();
+        
         visual.DOKill();
 
         // 衝突時に広がって消えるアニメーション

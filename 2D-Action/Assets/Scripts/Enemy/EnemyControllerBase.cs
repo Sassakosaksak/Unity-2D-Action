@@ -176,10 +176,9 @@ public abstract class EnemyControllerBase : MonoBehaviour
         return Vector2.Distance(transform.position, player.position);
     }
 
-    public virtual void BodyAttack(GameObject playerObj)
+    public virtual void BodyAttack(PlayerController player)
     {
-        PlayerController player = playerObj.GetComponent<PlayerController>();
-        if (player == null) return;
+        if( player == null) return;
 
         rb.linearVelocity = Vector2.zero;
         player.TakeDamage(bodyAttackDamage, transform.position);

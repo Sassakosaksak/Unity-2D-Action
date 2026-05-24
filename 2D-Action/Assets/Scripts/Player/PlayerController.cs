@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     [SerializeField]
     PlayerGroundSensor groundSensor;
+    private Collider2D bodyCollider;
+    public Collider2D BodyCollider => bodyCollider;
 
     Vector2 moveInput;
 
@@ -95,6 +97,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animEffect = GetComponent<AnimationEffectController>();
+        bodyCollider = GetComponent<Collider2D>();
         // デバッグ用
         animator = GetComponentInChildren<Animator>();
         //surfaceCheck = GetComponentInChildren<PlayerSurfaceCheck>();

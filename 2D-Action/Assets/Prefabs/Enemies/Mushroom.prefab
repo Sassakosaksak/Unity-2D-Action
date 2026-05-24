@@ -145,6 +145,7 @@ MonoBehaviour:
   attackRange: 2
   attackCooldown: 1
   stunPercentage: 0.25
+  attackRangeIncreaseSpeed: 0.5
   sporePrefab: {fileID: 3576420105507369818, guid: cf3379706e259c541b007c5fca5e79f3, type: 3}
   firePoint: {fileID: 4461723615051638905}
 --- !u!114 &2493920112807605110
@@ -295,6 +296,7 @@ GameObject:
   - component: {fileID: 3679713032569261498}
   - component: {fileID: 6427356030425311120}
   - component: {fileID: 4210695367868151946}
+  - component: {fileID: 218969565621757624}
   m_Layer: 8
   m_Name: BodyAttackCollider
   m_TagString: Enemy
@@ -375,6 +377,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e648a13d2a763ff408725100403c2712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &218969565621757624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6357558492358776919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eed9d0c26a8fef46b4751dbffd672ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyBodyCollider: {fileID: 1620327379731644909}
 --- !u!1 &7346639845243646944
 GameObject:
   m_ObjectHideFlags: 0

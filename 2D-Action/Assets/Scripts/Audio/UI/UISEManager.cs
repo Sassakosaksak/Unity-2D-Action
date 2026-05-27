@@ -10,6 +10,8 @@ public class UISEManager : MonoBehaviour
 	private SEEntry positiveSE;
 	[SerializeField]
 	private SEEntry negativeSE;
+	[SerializeField]
+	private SEEntry lockedSE;
 
     private void Awake()
     {
@@ -35,5 +37,10 @@ public class UISEManager : MonoBehaviour
 	public void PlayNegative()
 	{
 		SEManager.Instance.Play(negativeSE);
+	}
+
+	public void PlayLocked()
+	{
+		SEManager.Instance.Play(lockedSE);
 	}
 }

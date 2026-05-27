@@ -1,56 +1,76 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public enum UIButtonType
-{
-    Positive,
-    Negative
-}
-
-public class TitleMenuController :
+public class TitleMenuButton :
     MonoBehaviour,
     IPointerEnterHandler,
     IPointerClickHandler,
     ISelectHandler,
-    ISubmitHandler
+    ISubmitHandler,
+    IDeselectHandler
 {
     [SerializeField]
     private UIButtonType buttonType;
 
     private bool selected;
 
+    public static GameObject CurrentHoveredObject { get; private set; }
+    public static GameObject LastSelectedObject { get; private set; }
+
+    public void SetButtonType(UIButtonType buttonType)
+    {
+        this.buttonType = buttonType;
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("Pointer Enter", this); 
+        CurrentHoveredObject = gameObject;
+
+        EventSystem.current.SetSelectedGameObject(null);
+
+        selected = false;
+
         UISEManager.Instance.PlayHover();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (CurrentHoveredObject == gameObject)
+        {
+            CurrentHoveredObject = null;
+        }
     }
 
     public void OnSelect(BaseEventData eventData)
     {
-        Debug.Log("On Select", this);
         if (selected) return;
 
         selected = true;
+        LastSelectedObject = gameObject;
 
         UISEManager.Instance.PlayHover();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("Pointer Click", this);
         PlaySubmit();
     }
 
     public void OnSubmit(BaseEventData eventData)
     {
-        Debug.Log("Submit", this);
         PlaySubmit();
     }
 
     private void OnDisable()
     {
         selected = false;
+
+        if (CurrentHoveredObject == gameObject)
+        {
+            CurrentHoveredObject = null;
+        }
     }
+
     public void OnDeselect(BaseEventData eventData)
     {
         selected = false;
@@ -66,6 +86,10 @@ public class TitleMenuController :
 
             case UIButtonType.Negative:
                 UISEManager.Instance.PlayNegative();
+                break;
+
+            case UIButtonType.Locked:
+                UISEManager.Instance.PlayLocked();
                 break;
 
             default:

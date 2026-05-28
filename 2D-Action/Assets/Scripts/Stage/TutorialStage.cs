@@ -62,15 +62,11 @@ public class TutorialStageFlow : StageFlowBase
     {
         // 操作OFF
         playerController.SetInputEnabled(false);
-
-        // 右から左に移動
-        //playerAnimator.SetTrigger // Speedでanimator勝手にRunになるはず、ならなかったらTriggerとかつける
         playerController.AutoMove(-0.4f);
-        //TODO:トリガーとかで動きとめる形に変更
         yield return new WaitForSeconds(2f);
         playerController.AutoMoveStop();
 
-        // TODO:お宝見つけるぞの意気込みエモートを挿入
+        // TODO:お宝見つけるぞの意気込みエモートを挿入。進行に支障ないのでエモート素材の準備後に対応
 
         yield return new WaitForSeconds(1f);
 

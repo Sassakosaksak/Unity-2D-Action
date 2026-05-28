@@ -7,7 +7,6 @@ public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
     AnimationEffectController animEffect;
-    [SerializeField]
     Animator animator;
     [SerializeField]
     PlayerGroundSensor groundSensor;
@@ -98,10 +97,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animEffect = GetComponent<AnimationEffectController>();
         bodyCollider = GetComponent<Collider2D>();
-        // デバッグ用
         animator = GetComponentInChildren<Animator>();
-        //surfaceCheck = GetComponentInChildren<PlayerSurfaceCheck>();
-        //groundSensor = GetComponentInChildren<PlayerGroundSensor>();
     }
 
     void Start()

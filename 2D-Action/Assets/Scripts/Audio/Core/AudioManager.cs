@@ -42,8 +42,12 @@ public class AudioManager : MonoBehaviour
 
     public void ChangeBGM(AudioClip newBgm)
     {
-        // 新しいBGMが未指定 or 現在のBGMと同じならreturn
-        if (newBgm == null) return;
+        if (newBgm == null)
+        {
+            bgmTween = bgmSource.DOFade(0f, fadeDuration)
+                                .OnComplete(StopBGM);
+            return;
+        }
         if (bgmSource.clip == newBgm && bgmSource.isPlaying) return;
 
         bgmTween?.Kill();
@@ -62,8 +66,12 @@ public class AudioManager : MonoBehaviour
 
     public void ChangeAmbient(AudioClip newAmbient)
     {
-        // 新しいBGMが未指定 or 現在のBGMと同じならreturn
-        if (newAmbient == null) return;
+        if (newAmbient == null)
+        {
+            bgmTween = bgmSource.DOFade(0f, fadeDuration)
+                                .OnComplete(StopAmbient);
+            return;
+        }
         if (ambientSource.clip == newAmbient) return;
 
         ambientTween?.Kill();

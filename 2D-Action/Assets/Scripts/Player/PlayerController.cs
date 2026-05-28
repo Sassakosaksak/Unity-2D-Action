@@ -378,6 +378,7 @@ public class PlayerController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
         rb.linearVelocity = Vector2.zero;
         //rb.simulated = false;
+
         StartCoroutine(DieSequence());
     }
 

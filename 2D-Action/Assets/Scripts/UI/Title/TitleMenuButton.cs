@@ -9,6 +9,8 @@ public class TitleMenuButton :
     ISubmitHandler,
     IDeselectHandler
 {
+    private UISEController uiSE;
+
     [SerializeField]
     private UIButtonType buttonType;
 
@@ -16,6 +18,11 @@ public class TitleMenuButton :
 
     public static GameObject CurrentHoveredObject { get; private set; }
     public static GameObject LastSelectedObject { get; private set; }
+
+    private void Awake()
+    {
+        uiSE = GetComponent<UISEController>();
+    }
 
     public void SetButtonType(UIButtonType buttonType)
     {
@@ -30,7 +37,7 @@ public class TitleMenuButton :
 
         selected = false;
 
-        UISEManager.Instance.PlayHover();
+        uiSE.PlayHover();
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -48,7 +55,7 @@ public class TitleMenuButton :
         selected = true;
         LastSelectedObject = gameObject;
 
-        UISEManager.Instance.PlayHover();
+        uiSE.PlayHover();
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -81,20 +88,20 @@ public class TitleMenuButton :
         switch (buttonType)
         {
             case UIButtonType.Positive:
-                UISEManager.Instance.PlayPositive();
+                uiSE.PlayPositive();
                 break;
 
             case UIButtonType.Negative:
-                UISEManager.Instance.PlayNegative();
+                uiSE.PlayNegative();
                 break;
 
             case UIButtonType.Locked:
-                UISEManager.Instance.PlayLocked();
+                uiSE.PlayLocked();
                 break;
 
             default:
                 Debug.LogWarning($"Unsupported button type: {buttonType}", this);
-                UISEManager.Instance.PlayPositive();
+                uiSE.PlayPositive();
                 break;
         }
     }

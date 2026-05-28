@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2802853913091718419}
   - component: {fileID: 2118330266416839213}
   - component: {fileID: 6476764415154400730}
+  - component: {fileID: 5020144441524927662}
   m_Layer: 5
   m_Name: StageSelectButton
   m_TagString: Untagged
@@ -182,7 +183,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 620b5e1e751768843912b1c7b159e7d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiSE: {fileID: 5020144441524927662}
   buttonType: 0
+--- !u!114 &5020144441524927662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395102466034561845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1815532c38622194c99960bea0dcf6ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverSE:
+    clips:
+    - {fileID: 8300000, guid: 26ce5e7d85dda2b44bab888884f6439f, type: 3}
+    volume: 0.8
+    isPitchRandom: 1
+    pitchRange: {x: 0.9, y: 0.9}
+  positiveSE:
+    clips:
+    - {fileID: 8300000, guid: 1a9a931e9bb7d774bbe15abc5935cf2e, type: 3}
+    volume: 1.1
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
+  negativeSE:
+    clips:
+    - {fileID: 8300000, guid: 3d515eee0237d544599a8f27e13c4a27, type: 3}
+    volume: 1.1
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
+  lockedSE:
+    clips:
+    - {fileID: 8300000, guid: 9614f755d4efd644dbc665ab254fe63a, type: 3}
+    volume: 1
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
 --- !u!1 &2711654702734916414
 GameObject:
   m_ObjectHideFlags: 0

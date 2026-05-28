@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1620327379731644909}
   - component: {fileID: 2931290008074321865}
   - component: {fileID: 2493920112807605110}
-  - component: {fileID: 3105087002127128486}
+  - component: {fileID: 2461442201542025030}
   m_Layer: 8
   m_Name: Mushroom
   m_TagString: Enemy
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f0c55b33fb168542a145a07321d9b86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyBaseSEController: {fileID: 3105087002127128486}
+  enemyBaseSEController: {fileID: 2461442201542025030}
   bodyAttackCol: {fileID: 6427356030425311120}
   maxHP: 5
   currentHP: 0
@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 4839460020545703270}
---- !u!114 &3105087002127128486
+--- !u!114 &2461442201542025030
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5070685513029764848}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9ed60fc76f25264ebf4d0069f3b26bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bb4637c8d2b13040a6e2e68befe54f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hit:

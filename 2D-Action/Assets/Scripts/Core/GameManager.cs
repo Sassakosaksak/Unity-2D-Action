@@ -12,11 +12,13 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Image darkPanel;
     [SerializeField]
+    private SEEntry gameOverSE;
+    [SerializeField]
     private GameObject gameClearUI;
     [SerializeField]
     private Image clearPanel;
     [SerializeField]
-    AudioClip gameClearBGM;
+    private AudioClip gameClearBGM;
 
     private bool isGameOver = false;
     private bool isGameClear = false;
@@ -43,6 +45,10 @@ public class GameManager : MonoBehaviour
     {
         if (isGameOver) return;
         isGameOver = true;
+
+        SEManager.Instance.Play(gameOverSE);
+        AudioManager.Instance.ChangeBGM(null);
+        AudioManager.Instance.ChangeAmbient(null);
 
         CanvasGroup canvasGroup = gameOverUI.GetComponent<CanvasGroup>();
         canvasGroup.alpha = 0f;

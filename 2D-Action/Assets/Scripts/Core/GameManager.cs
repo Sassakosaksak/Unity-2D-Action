@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     private GameObject gameClearUI;
     [SerializeField]
     private Image clearPanel;
+    [SerializeField]
+    AudioClip gameClearBGM;
 
     private bool isGameOver = false;
     private bool isGameClear = false;
@@ -65,6 +67,9 @@ public class GameManager : MonoBehaviour
     {
         if (isGameClear) return;
         isGameClear = true;
+
+        AudioManager.Instance.ChangeBGM(gameClearBGM);
+        AudioManager.Instance.ChangeAmbient(null);
 
         CanvasGroup canvasGroup = gameClearUI.GetComponent<CanvasGroup>();
         canvasGroup.alpha = 0f;

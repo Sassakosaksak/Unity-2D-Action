@@ -45,6 +45,7 @@ public class AudioManager : MonoBehaviour
         if (newBgm == null)
         {
             bgmTween = bgmSource.DOFade(0f, fadeDuration)
+                                .SetUpdate(true)
                                 .OnComplete(StopBGM);
             return;
         }
@@ -53,6 +54,7 @@ public class AudioManager : MonoBehaviour
         bgmTween?.Kill();
 
         bgmTween = DOTween.Sequence()
+                          .SetUpdate(true)
                           .Append(bgmSource.DOFade(0f, fadeDuration))
                           .AppendCallback(() =>
                           {
@@ -69,6 +71,7 @@ public class AudioManager : MonoBehaviour
         if (newAmbient == null)
         {
             bgmTween = bgmSource.DOFade(0f, fadeDuration)
+                                .SetUpdate(true)
                                 .OnComplete(StopAmbient);
             return;
         }
@@ -77,6 +80,7 @@ public class AudioManager : MonoBehaviour
         ambientTween?.Kill();
 
         ambientTween = DOTween.Sequence()
+                              .SetUpdate(true)
                               .Append(ambientSource.DOFade(0f, fadeDuration))
                               .AppendCallback(() =>
                               {

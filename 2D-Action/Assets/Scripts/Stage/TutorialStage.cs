@@ -22,8 +22,6 @@ public class TutorialStageFlow : StageFlowBase
     [SerializeField]
     private GameObject goal;
     [SerializeField]
-    private GameObject goalArea;
-    [SerializeField]
     private GameObject playerMessageGroup;
 
     private PlayerController playerController;
@@ -78,7 +76,6 @@ public class TutorialStageFlow : StageFlowBase
     {
         enemyGroup.SetActive(true);
         goal.SetActive(true);
-        goalArea.SetActive(true);
 
         StartCoroutine(ChestOpenedSequence());
     }

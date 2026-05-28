@@ -1554,7 +1554,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &875465558
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6878,7 +6878,7 @@ GameObject:
   - component: {fileID: 1689088487}
   - component: {fileID: 1689088486}
   m_Layer: 0
-  m_Name: UISEManager
+  m_Name: UISEController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21688,6 +21688,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Button (Start)
       objectReference: {fileID: 0}
+    - target: {fileID: 1817866071983944282, guid: 5c8d66241bec867458ddc0ca046acdd8, type: 3}
+      propertyPath: uiSE
+      value: 
+      objectReference: {fileID: 1689088486}
     - target: {fileID: 2826579810344337384, guid: 5c8d66241bec867458ddc0ca046acdd8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

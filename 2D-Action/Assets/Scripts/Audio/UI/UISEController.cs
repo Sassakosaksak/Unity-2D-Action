@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class UISEManager : MonoBehaviour
+public class UISEController : MonoBehaviour
 {
-	public static UISEManager Instance { get; private set; }
-
 	[SerializeField]
 	private SEEntry hoverSE;
 	[SerializeField]
@@ -12,17 +10,6 @@ public class UISEManager : MonoBehaviour
 	private SEEntry negativeSE;
 	[SerializeField]
 	private SEEntry lockedSE;
-
-    private void Awake()
-    {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
 
     public void PlayHover()
 	{

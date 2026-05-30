@@ -42,6 +42,16 @@ public class PlayerAnimationEventRelay : MonoBehaviour
         player.Anim_AttackStart();
     }
 
+    public void AttackComboInputOpen()
+    {
+        player.OpenComboInput();
+    }
+
+    public void AttackComboInputClose()
+    {
+        player.CloseComboInput();
+    }
+
     public void AttackSE()
     {
         playerSE.PlaySwordSwing();
@@ -55,7 +65,7 @@ public class PlayerAnimationEventRelay : MonoBehaviour
     #endregion
 
     #region Hit
-    
+
     public void HitSE()
     {
         playerSE.PlayDamage();

@@ -304,28 +304,7 @@ public class PlayerController : MonoBehaviour
         float dirX = transform.position.x >= attackerPosition.x ? 1f : -1f;
 
         rb.linearVelocity = Vector2.zero;
-        //rb.linearVelocity = new Vector2(dirX * knockBackXPower, knockBackYPower);
-
-        // TODO:異常なノックバックあったので、検知用。不要になったら消す
-        Vector2 knockBackVelocity = new Vector2(
-            dirX * knockBackXPower,
-            knockBackYPower
-        );
-
-        if (knockBackVelocity.magnitude > 10f)
-        {
-            Debug.LogError(
-                $"[DamageSequence 異常ノックバック] " +
-                $"knockBackVelocity={knockBackVelocity}, " +
-                $"magnitude={knockBackVelocity.magnitude}, " +
-                $"playerPos={transform.position}, " +
-                $"attackerPos={attackerPosition}, " +
-                $"knockBackXPower={knockBackXPower}, " +
-                $"knockBackYPower={knockBackYPower}"
-            );
-        }
-
-        rb.linearVelocity = knockBackVelocity;
+        rb.linearVelocity = new Vector2(dirX * knockBackXPower, knockBackYPower);
 
         yield return new WaitForSeconds(knockBackControlLockTime);
 

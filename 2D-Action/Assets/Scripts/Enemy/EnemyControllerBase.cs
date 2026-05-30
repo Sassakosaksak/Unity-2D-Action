@@ -47,6 +47,11 @@ public abstract class EnemyControllerBase : MonoBehaviour
     [SerializeField]
     private LayerMask enemyLayer;
 
+    // Note:ヒットストップの値は現状固定
+    // 演出や攻撃に応じて変更するタイミングで入力側から入れられるように調整
+    private float hitStopDuration = 0.13f;
+    private float hitStopDurationOfDie = 0.2f;
+    private float hitStopScale = 0.05f;
 
     /// <summary>
     /// キャラクターのレベル
@@ -102,9 +107,11 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
         if (currentHP <= 0)
         {
+            HitStopManager.Instance.Play(hitStopDurationOfDie, hitStopScale);
             Die();
             return;
         }
+        HitStopManager.Instance.Play(hitStopDuration, hitStopScale);
         Hit();
 
     }

@@ -35,6 +35,11 @@ public class PlayerController : MonoBehaviour
     private float autoMoveDirection = 1f;
     private bool canInput = true;
 
+    private int comboStep = 0;
+    private bool canComboInput = false;
+
+    private int maxComboStep = 3;
+
     private State currentState;
 
     [SerializeField]
@@ -233,12 +238,9 @@ public class PlayerController : MonoBehaviour
         if (!canInput) return;
         if (isDead) return;
         if (isKnockBacking) return;
+        if (!context.started) return;
 
-        if (context.started)
-        {
-            SetIsAttacking(true);
-            animator.SetTrigger("Attack");
-        }
+        TryAttack();
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -261,20 +263,35 @@ public class PlayerController : MonoBehaviour
 
     public void Anim_AttackStart()
     {
-        SetIsAttacking(true);
+        isAttacking = true;
+        animator.SetBool("IsAttacking", true);
+    }
+
+
+    public void OpenComboInput()
+    {
+        canComboInput = true;
+    }
+
+    public void CloseComboInput()
+    {
+        canComboInput = false;
     }
 
     public void Anim_AttackEnd()
     {
-        SetIsAttacking();
+        EndAttack();
     }
 
     #endregion
-    
+
     public void TakeDamage(int damage, Vector2 attackerPosition)
     {
         if (isInvincible) return;
         if (isDead) return;
+
+        // TODO:攻撃状態の管理を整理したタイミングで場所要調整
+        CancelAttack();
 
         currentHP -= damage;
         hpBar.SetHP(currentHP, maxHP);
@@ -318,13 +335,37 @@ public class PlayerController : MonoBehaviour
         animEffect.StopInvincibleBlink();
     }
 
-    IEnumerator InvincibleCoroutine()
+    private void TryAttack()
     {
-        isInvincible = true;
+        if (!isAttacking)
+        {
+            StartAttack(1);
+            return;
+        }
 
-        yield return new WaitForSeconds(invincibleTime);
+        if (!canComboInput) return;
+        if (comboStep >= maxComboStep) return;
 
-        isInvincible = false;
+        StartAttack(comboStep + 1);
+    }
+    private void StartAttack(int comboStep)
+    {
+        isAttacking = true;
+        this.comboStep = comboStep;
+
+        animator.SetBool("IsAttacking", true);
+        animator.SetInteger("ComboStep", comboStep);
+        animator.SetTrigger("Attack");
+    }
+
+    private void EndAttack()
+    {
+        isAttacking = false;
+        canComboInput = false;
+        comboStep = 0;
+
+        animator.SetBool("IsAttacking", false);
+        animator.SetInteger("ComboStep", comboStep);
     }
 
     private IEnumerator DieSequence()
@@ -359,12 +400,6 @@ public class PlayerController : MonoBehaviour
         //rb.simulated = false;
 
         StartCoroutine(DieSequence());
-    }
-
-    private void SetIsAttacking(bool isAttacking = false)
-    {
-        this.isAttacking = isAttacking;
-        animator.SetBool("IsAttacking", isAttacking);
     }
 
     public void RecoverFromHit()
@@ -406,5 +441,13 @@ public class PlayerController : MonoBehaviour
         {
             moveInput = Vector2.zero;
         }
+    }
+
+    private void CancelAttack()
+    {
+        isAttacking = false;
+
+        animator.SetBool("IsAttacking", false);
+        animator.SetInteger("ComboStep", 0);
     }
 }

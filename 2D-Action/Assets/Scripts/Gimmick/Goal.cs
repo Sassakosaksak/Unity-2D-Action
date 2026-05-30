@@ -4,8 +4,11 @@ public class Goal : MonoBehaviour
 {
     [SerializeField] 
     private StageFlowBase stageFlow;
-    
+    [SerializeField]
+    private GameObject fireworks;
+
     private GameClearSEController gameClearSEController;
+
 
     private void Awake()
     {
@@ -18,5 +21,6 @@ public class Goal : MonoBehaviour
 
         stageFlow.ClearStage();
         gameClearSEController.PlayTriumph();
+        ParticleManager.Instance.ChangeParticle(fireworks);
     }
 }

@@ -263,13 +263,18 @@ public class PlayerController : MonoBehaviour
 
     public void Anim_AttackStart()
     {
+        if (isHit) return;
+        if (isDead) return;
+
         isAttacking = true;
         animator.SetBool("IsAttacking", true);
     }
 
-
     public void OpenComboInput()
     {
+        if (isHit) return;
+        if (isDead) return;
+
         canComboInput = true;
     }
 
@@ -446,7 +451,10 @@ public class PlayerController : MonoBehaviour
     private void CancelAttack()
     {
         isAttacking = false;
+        canComboInput = false;
+        comboStep = 0;
 
+        animator.ResetTrigger("Attack");
         animator.SetBool("IsAttacking", false);
         animator.SetInteger("ComboStep", 0);
     }

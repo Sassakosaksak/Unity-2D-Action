@@ -31,11 +31,9 @@ public class TitleMenuButton :
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (CurrentHoveredObject == gameObject) return;
+
         CurrentHoveredObject = gameObject;
-
-        EventSystem.current.SetSelectedGameObject(null);
-
-        selected = false;
 
         uiSE.PlayHover();
     }

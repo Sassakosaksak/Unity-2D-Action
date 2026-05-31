@@ -1,5 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -7,6 +9,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    [Header("Input")]
+    [SerializeField]
+    private PlayerInput playerInput;
+
+    [Header("UI")]
     [SerializeField]
     private GameObject gameOverUI;
     [SerializeField]
@@ -19,6 +26,10 @@ public class GameManager : MonoBehaviour
     private Image clearPanel;
     [SerializeField]
     private AudioClip gameClearBGM;
+    [SerializeField]
+    private GameObject retryButton;
+    [SerializeField]
+    private GameObject titleButton;
 
     private bool isGameOver = false;
     private bool isGameClear = false;
@@ -44,8 +55,10 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         if (isGameOver) return;
-        isGameOver = true;
+        playerInput.SwitchCurrentActionMap("UI");
 
+        isGameOver = true;
+        
         SEManager.Instance.Play(gameOverSE);
         AudioManager.Instance.ChangeBGM(null);
         AudioManager.Instance.ChangeAmbient(null);
@@ -54,6 +67,7 @@ public class GameManager : MonoBehaviour
         canvasGroup.alpha = 0f;
 
         gameOverUI.SetActive(true);
+        SelectButton(retryButton);
 
         darkPanel.DOFade(0.7f, 1f);
 
@@ -66,7 +80,18 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
 
+        playerInput.SwitchCurrentActionMap("Player");
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ReturnToTitle()
+    {
+        Time.timeScale = 1f;
+
+        playerInput.SwitchCurrentActionMap("Player");
+
+        SceneManager.LoadScene("TitleScene");
     }
 
     public void GameClear()
@@ -81,6 +106,7 @@ public class GameManager : MonoBehaviour
         canvasGroup.alpha = 0f;
 
         gameClearUI.SetActive(true);
+        SelectButton(titleButton);
 
         Sequence seq = DOTween.Sequence();
         seq.Append(clearPanel.DOFade(0.2f, 2f))
@@ -91,5 +117,11 @@ public class GameManager : MonoBehaviour
            .SetUpdate(true);
 
         Time.timeScale = 0f;
+    }
+
+    private void SelectButton(GameObject button)
+    {
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(button);
     }
 }

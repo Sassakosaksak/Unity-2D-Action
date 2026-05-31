@@ -2416,7 +2416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SendPointerHoverToParent: 1
-  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatDelay: 0.2
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
   m_ActionsAsset: {fileID: -944628639613478452, guid: dc2273d69eaae00499aca6df17f25976, type: 3}
@@ -2430,7 +2430,7 @@ MonoBehaviour:
   m_ScrollWheelAction: {fileID: -4057060531609206846, guid: dc2273d69eaae00499aca6df17f25976, type: 3}
   m_TrackedDevicePositionAction: {fileID: 4652764154338846917, guid: dc2273d69eaae00499aca6df17f25976, type: 3}
   m_TrackedDeviceOrientationAction: {fileID: -6373892475077625606, guid: dc2273d69eaae00499aca6df17f25976, type: 3}
-  m_DeselectOnBackgroundClick: 1
+  m_DeselectOnBackgroundClick: 0
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
   m_ScrollDeltaPerTick: 6
@@ -7427,7 +7427,7 @@ MonoBehaviour:
   - layer: 2
     layerObject: {fileID: 208147182}
     firstSelectedButton: {fileID: 671587763}
-  titleLogo: {fileID: 1722834818}
+  titleLogo: {fileID: 1722834819}
   stageSelectController: {fileID: 479877044}
   navigateAction: {fileID: -8784545083839296357, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!4 &1755932004
@@ -8032,6 +8032,7 @@ GameObject:
   - component: {fileID: 1921447352}
   - component: {fileID: 1921447351}
   - component: {fileID: 1921447350}
+  - component: {fileID: 1921447354}
   m_Layer: 5
   m_Name: Button (Back)
   m_TagString: Untagged
@@ -8166,6 +8167,42 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1921447348}
   m_CullTransparentMesh: 1
+--- !u!114 &1921447354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1921447348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1815532c38622194c99960bea0dcf6ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverSE:
+    clips:
+    - {fileID: 8300000, guid: 26ce5e7d85dda2b44bab888884f6439f, type: 3}
+    volume: 0.8
+    isPitchRandom: 1
+    pitchRange: {x: 0.9, y: 0.9}
+  positiveSE:
+    clips:
+    - {fileID: 8300000, guid: 1a9a931e9bb7d774bbe15abc5935cf2e, type: 3}
+    volume: 1.1
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
+  negativeSE:
+    clips:
+    - {fileID: 8300000, guid: 3d515eee0237d544599a8f27e13c4a27, type: 3}
+    volume: 1.1
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
+  lockedSE:
+    clips:
+    - {fileID: 8300000, guid: 9614f755d4efd644dbc665ab254fe63a, type: 3}
+    volume: 1
+    isPitchRandom: 0
+    pitchRange: {x: 0.95, y: 1.05}
 --- !u!1 &2008647182
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,7 +18,7 @@ public class TitleController : MonoBehaviour
     [SerializeField]
     private TitleLayerEntry[] layerEntries;
     [SerializeField]
-    private GameObject titleLogo;
+    private RectTransform titleLogo;
 
     [Header("Controller")]
     [SerializeField]
@@ -31,6 +32,7 @@ public class TitleController : MonoBehaviour
     private void Start()
     {
         ShowLayer(TitleLayer.Top);
+        PlayTitleLogoAnimation();
     }
     private void Update()
     {
@@ -51,6 +53,19 @@ public class TitleController : MonoBehaviour
     private void OnDisable()
     {
         navigateAction.action.performed -= OnNavigate;
+    }
+
+    private void PlayTitleLogoAnimation()
+    {
+        float startY = titleLogo.anchoredPosition.y;
+
+        titleLogo.DOAnchorPosY(startY + 10f, 2f)
+                 .SetEase(Ease.InOutSine)
+                 .SetLoops(-1, LoopType.Yoyo);
+
+        titleLogo.DOScale(1.03f, 2f)
+                 .SetEase(Ease.InOutSine)
+                 .SetLoops(-1, LoopType.Yoyo);
     }
 
     private void OnNavigate(InputAction.CallbackContext context)
@@ -152,7 +167,7 @@ public class TitleController : MonoBehaviour
         // ç∑ï™Ç™ëùÇ¶ÇΩÇÁÅAäeLayerControllerÇ÷ÇÃï™ó£Çåüì¢
         if (titleLogo != null)
         {
-            titleLogo.SetActive(titleLayer != TitleLayer.Option);
+            titleLogo.gameObject.SetActive(titleLayer != TitleLayer.Option);
         }
 
         if (titleLayer == TitleLayer.StageSelect)

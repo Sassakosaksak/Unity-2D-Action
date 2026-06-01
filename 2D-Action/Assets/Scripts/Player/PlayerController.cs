@@ -1,7 +1,5 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using DG.Tweening;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,27 +8,18 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     [SerializeField]
     PlayerGroundSensor groundSensor;
-    private Collider2D bodyCollider;
-    public Collider2D BodyCollider => bodyCollider;
+    private PlayerDamageController damageController;
 
     Vector2 moveInput;
 
-    [Header("ステータス関連")]
-    [SerializeField]
-    private int maxHP = 10;
-    [SerializeField]
-    private int currentHP;
-    private bool isInvincible;
-    private bool isDead;
-    public bool IsDead => isDead;
-    [SerializeField]
-    private float invincibleTime = 1f;
+    public bool IsDead => damageController.IsDead;
+
+    public Collider2D BodyCollider => damageController.BodyCollider;
+
     private bool isGrounded;
     private bool isAttacking;
-    private bool isHit;
     [SerializeField]
     private bool rightFacing = true;
-    private bool isKnockBacking = false;
     private bool isAutoMoving = false;
     private float autoMoveDirection = 1f;
     private bool canInput = true;
@@ -44,9 +33,6 @@ public class PlayerController : MonoBehaviour
     private float attackMoveMultiplier = 0.3f;
     
     private State currentState;
-
-    [SerializeField]
-    private HPBar hpBar;
 
     [SerializeField]
     public float speed = 10f;
@@ -78,19 +64,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] 
     private LayerMask groundLayer;
 
-    [SerializeField]
-    private float knockBackXPower = 2f;
-    [SerializeField]
-    private float knockBackYPower = 3f;
-    [SerializeField] 
-    private float knockBackControlLockTime = 0.25f;
-
-    [ContextMenu("Die")]
-    private void DebugDie()
-    {
-        TakeDamage(999, transform.localPosition + new Vector3(1, 0, 0));
-    }
-
     enum State
     {
         Idle,
@@ -104,23 +77,19 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animEffect = GetComponent<AnimationEffectController>();
-        bodyCollider = GetComponent<Collider2D>();
         animator = GetComponentInChildren<Animator>();
+        damageController = GetComponent<PlayerDamageController>();
     }
 
     void Start()
     {
-
-        currentHP = maxHP;
-        hpBar.SetHP(currentHP, maxHP);
-
         transform.localScale = new Vector2(rightFacing ? 1 : -1, 1);
     }
 
     void Update()
     {
-        if (isDead) return;
-        if (isKnockBacking) return;
+        if (damageController.IsDead) return;
+        if (damageController.IsKnockBacking) return;
 
         isGrounded = groundSensor.IsGrounded;
 
@@ -132,8 +101,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDead) return;
-        if (isKnockBacking) return;
+        if (damageController.IsDead) return;
+        if (damageController.IsKnockBacking) return;
 
         CulcPlayerSpeed();
         ApplyBetterJump();
@@ -252,7 +221,7 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         if (!canInput) return;
-        if (isDead) return;
+        if (damageController.IsDead) return;
         moveInput = context.ReadValue<Vector2>();
 
         // 攻撃中は向き変更禁止
@@ -265,8 +234,8 @@ public class PlayerController : MonoBehaviour
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (!canInput) return;
-        if (isDead) return;
-        if (isKnockBacking) return;
+        if (damageController.IsDead) return;
+        if (damageController.IsKnockBacking) return;
         if (!context.started) return;
 
         TryAttack();
@@ -277,8 +246,8 @@ public class PlayerController : MonoBehaviour
         // TODO：コヨーテタイム、ジャンプバッファ入れたい
         if (!canInput) return; 
         if (!context.started) return;
-        if (isDead) return;
-        if (isKnockBacking) return;
+        if (damageController.IsDead) return;
+        if (damageController.IsKnockBacking) return;
 
         if (isGrounded)
         {
@@ -292,8 +261,8 @@ public class PlayerController : MonoBehaviour
 
     public void Anim_AttackStart()
     {
-        if (isHit) return;
-        if (isDead) return;
+        if (damageController.IsHit) return;
+        if (damageController.IsDead) return;
 
         isAttacking = true;
         animator.SetBool("IsAttacking", true);
@@ -301,8 +270,8 @@ public class PlayerController : MonoBehaviour
 
     public void OpenComboInput()
     {
-        if (isHit) return;
-        if (isDead) return;
+        if (damageController.IsHit) return;
+        if (damageController.IsDead) return;
 
         canComboInput = true;
     }
@@ -321,52 +290,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage, Vector2 attackerPosition)
     {
-        if (isInvincible) return;
-        if (isDead) return;
-
-        // TODO:攻撃状態の管理を整理したタイミングで場所要調整
-        CancelAttack();
-
-        currentHP -= damage;
-        hpBar.SetHP(currentHP, maxHP);
-
-        if (currentHP <= 0)
-        {
-            ChangeState(State.Die);
-            Die();
-            return;
-        }
-
-        StartCoroutine(DamageSequence(attackerPosition));
-
-    }
-
-    private IEnumerator DamageSequence(Vector2 attackerPosition)
-    {
-        isInvincible = true;
-        isKnockBacking = true;
-        isHit = true;
-
-        animator.SetBool("IsHit", isHit);
-
-        animEffect.PlayHitPunch();
-        animEffect.PlayInvincibleBlink();
-
-        float dirX = transform.position.x >= attackerPosition.x ? 1f : -1f;
-
-        rb.linearVelocity = Vector2.zero;
-        rb.linearVelocity = new Vector2(dirX * knockBackXPower, knockBackYPower);
-
-        yield return new WaitForSeconds(knockBackControlLockTime);
-
-        RecoverFromHit();
-        
-        yield return new WaitForSeconds(invincibleTime - knockBackControlLockTime);
-
-        //rb.linearVelocity = Vector2.zero;
-        isInvincible = false;
-
-        animEffect.StopInvincibleBlink();
+        damageController.TakeDamage(damage, attackerPosition);
     }
 
     private void TryAttack()
@@ -402,45 +326,9 @@ public class PlayerController : MonoBehaviour
         animator.SetInteger("ComboStep", comboStep);
     }
 
-    private IEnumerator DieSequence()
-    {
-        // 一瞬停止
-        Time.timeScale = 0f;
-
-        yield return new WaitForSecondsRealtime(0.5f);
-
-        // スロー
-        Time.timeScale = 0.2f;
-
-        // Dieアニメ再生
-        animator.SetBool("IsDead", true);
-
-        yield return new WaitForSecondsRealtime(1f);
-
-        // 元に戻す
-        Time.timeScale = 1f;
-
-        yield return new WaitForSeconds(1.5f);
-
-        GameManager.Instance.GameOver();
-        //Destroy(gameObject);
-    }
-
-    public void Die()
-    {
-        isDead = true;
-        gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
-        rb.linearVelocity = Vector2.zero;
-        //rb.simulated = false;
-
-        StartCoroutine(DieSequence());
-    }
-
     public void RecoverFromHit()
     {
-        isKnockBacking = false;
-        isHit = false;
-        animator.SetBool("IsHit", isHit);
+        damageController.RecoverFromHit();
     }
 
     /// <summary>
@@ -477,7 +365,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void CancelAttack()
+    public void CancelAttack()
     {
         isAttacking = false;
         canComboInput = false;

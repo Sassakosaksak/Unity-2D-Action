@@ -38,8 +38,11 @@ public class PlayerController : MonoBehaviour
     private int comboStep = 0;
     private bool canComboInput = false;
 
-    private int maxComboStep = 3;
+    private int maxComboStep = 2;
 
+    [SerializeField]
+    private float attackMoveMultiplier = 0.3f;
+    
     private State currentState;
 
     [SerializeField]
@@ -167,13 +170,24 @@ public class PlayerController : MonoBehaviour
     {
         // 入力値
         float move = isAutoMoving ? autoMoveDirection : moveInput.x;
-        //float move = moveInput.x;
+
+        if (isAttacking)
+        {
+            float facingDirection = rightFacing ? 1f : -1f;
+
+            if (Mathf.Sign(move) != facingDirection)
+            {
+                move = 0f;
+            }
+        }
+
+        float moveSpeedMultiplier = isAttacking ? attackMoveMultiplier : 1f;
 
         // 小さい値を0に（ブレ防止）
         if (Mathf.Abs(move) < 0.1f) move = 0f;
 
         // 加速・減速
-        float targetSpeed = move * speed;
+        float targetSpeed = move * speed * moveSpeedMultiplier;
         float currentSpeed = rb.linearVelocityX;
 
         if (Mathf.Abs(move) > 0.1f)
@@ -190,8 +204,21 @@ public class PlayerController : MonoBehaviour
             currentSpeed = 0f;
         }
 
+        // 攻撃終了後は移動方向へ向き直す
+        if (!isAttacking && !IsInAttackAnimation())
+        {
+            UpdateFacing(move);
+        }
+
         // 移動
         rb.linearVelocity = new Vector2(currentSpeed, rb.linearVelocity.y);
+    }
+
+    private bool IsInAttackAnimation()
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        return stateInfo.IsTag("Attack");
     }
 
     /// <summary>
@@ -212,6 +239,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void UpdateFacing(float direction)
+    {
+        if (Mathf.Abs(direction) < 0.1f) return;
+
+        rightFacing = direction > 0;
+        transform.localScale = new Vector2(rightFacing ? 1 : -1, 1);
+    }
+
     #region InputActions
 
     public void OnMove(InputAction.CallbackContext context)
@@ -220,17 +255,11 @@ public class PlayerController : MonoBehaviour
         if (isDead) return;
         moveInput = context.ReadValue<Vector2>();
 
+        // 攻撃中は向き変更禁止
+        if (isAttacking) return;
+
         // ノックバックの移動は操作不可時間があるため見ない
         //if (isKnockBacking) return;
-
-        rightFacing = moveInput.x > 0;
-
-        // 向き反転
-        if (moveInput.x != 0)
-        {
-            transform.localScale = new Vector2(rightFacing ? 1 : -1, 1);
-        }
-
     }
 
     public void OnAttack(InputAction.CallbackContext context)

@@ -240,8 +240,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
     {
         if (player == null) return true;
 
-        PlayerController playerController =
-            player.GetComponent<PlayerController>();
+        PlayerController playerController = player.GetComponent<PlayerController>();
 
         return playerController != null && playerController.IsDead;
     }

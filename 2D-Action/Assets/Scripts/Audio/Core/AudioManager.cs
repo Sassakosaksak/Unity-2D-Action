@@ -70,9 +70,9 @@ public class AudioManager : MonoBehaviour
     {
         if (newAmbient == null)
         {
-            bgmTween = bgmSource.DOFade(0f, fadeDuration)
-                                .SetUpdate(true)
-                                .OnComplete(StopAmbient);
+            ambientTween = ambientSource.DOFade(0f, fadeDuration)
+                                        .SetUpdate(true)
+                                        .OnComplete(StopAmbient);
             return;
         }
         if (ambientSource.clip == newAmbient) return;

@@ -36,7 +36,6 @@ public abstract class EnemyControllerBase : MonoBehaviour
     private float knockBackDecay = 0.9f;
 
     protected bool isDead = false;
-    protected bool isMove = false;
     protected bool isInvincible = false;
 
     [Header("Collision of Between Enemies")]
@@ -222,11 +221,6 @@ public abstract class EnemyControllerBase : MonoBehaviour
     protected virtual bool CanTakeDamage()
     {
         return !isDead && !isInvincible;
-    }
-
-    protected virtual bool CanMove()
-    {
-        return !isDead && !isKnockBacking;
     }
 
     protected virtual bool CanAct()

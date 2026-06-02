@@ -48,9 +48,9 @@ public class PlayerAttackController : MonoBehaviour
         isAttacking = true;
         this.comboStep = comboStep;
 
-        animator.SetBool("IsAttacking", true);
-        animator.SetInteger("ComboStep", comboStep);
-        animator.SetTrigger("Attack");
+        animator.SetBool(PlayerAnimatorParamNames.IsAttacking, true);
+        animator.SetInteger(PlayerAnimatorParamNames.ComboStep, comboStep);
+        animator.SetTrigger(PlayerAnimatorParamNames.Attack);
     }
 
     public void EndAttack()
@@ -59,8 +59,8 @@ public class PlayerAttackController : MonoBehaviour
         canComboInput = false;
         comboStep = 0;
 
-        animator.SetBool("IsAttacking", false);
-        animator.SetInteger("ComboStep", comboStep);
+        animator.SetBool(PlayerAnimatorParamNames.IsAttacking, false);
+        animator.SetInteger(PlayerAnimatorParamNames.ComboStep, comboStep);
     }
 
     public void CancelAttack()
@@ -69,9 +69,9 @@ public class PlayerAttackController : MonoBehaviour
         canComboInput = false;
         comboStep = 0;
 
-        animator.ResetTrigger("Attack");
-        animator.SetBool("IsAttacking", false);
-        animator.SetInteger("ComboStep", 0);
+        animator.ResetTrigger(PlayerAnimatorParamNames.Attack);
+        animator.SetBool(PlayerAnimatorParamNames.IsAttacking, false);
+        animator.SetInteger(PlayerAnimatorParamNames.ComboStep, 0);
     }
 
     public void Anim_AttackStart()
@@ -80,7 +80,7 @@ public class PlayerAttackController : MonoBehaviour
         if (damageController.IsDead) return;
 
         isAttacking = true;
-        animator.SetBool("IsAttacking", true);
+        animator.SetBool(PlayerAnimatorParamNames.IsAttacking, true);
     }
 
     public void Anim_AttackEnd()

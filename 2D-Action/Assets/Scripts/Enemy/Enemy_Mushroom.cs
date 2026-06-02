@@ -1,5 +1,4 @@
 using UnityEngine;
-using DG.Tweening;
 
 public class Enemy_Mushroom : EnemyControllerBase
 {
@@ -9,8 +8,7 @@ public class Enemy_Mushroom : EnemyControllerBase
         Run,
         PrepareAttack,
         Attack,
-        Stun,
-        Die
+        Stun
     }
 
     [Header("Move")]
@@ -68,8 +66,6 @@ public class Enemy_Mushroom : EnemyControllerBase
     protected override void Update()
     {
         if (!CanAct()) return;
-        
-        base.Update();
 
         attackTimer += Time.deltaTime;
 
@@ -90,25 +86,14 @@ public class Enemy_Mushroom : EnemyControllerBase
                 UpdateRun();
                 break;
 
-                //case State.PrepareAttack:
-                //    UpdatePrepareAttack();
-                //    break;
-
-                //case State.Attack:
-                //    UpdateAttack();
-                //    break;
         }
     }
 
-    void UpdateIdle()
+    private void UpdateIdle()
     {
         float distance = GetDistanceToPlayer();
 
-        // Idle状態でゆっくりプレイヤー側に移動
         // ToDo:回遊にしたい
-        //Vector2 dir = (player.position - transform.position).normalized;
-        //rb.linearVelocity = new Vector2(dir.x * walkSpeed, rb.linearVelocityY);
-        Vector2 dir = (player.position - transform.position).normalized;
         rb.linearVelocity = Vector2.zero;
 
         // プレイヤーとの距離が一定以下になったらRun
@@ -118,7 +103,7 @@ public class Enemy_Mushroom : EnemyControllerBase
         }
     }
 
-    void UpdateRun()
+    private void UpdateRun()
     {
         float distance = GetDistanceToPlayer();
 
@@ -161,11 +146,11 @@ public class Enemy_Mushroom : EnemyControllerBase
 
         attackTimer = 0f;
 
-        if (animator.GetBool("IsStun"))
+        if (animator != null && animator.GetBool("IsStun"))
         {
             return;
         }
-        CommonMoveSetting();
+        ReturnToIdle();
     }
 
     public void Anim_StunStart()
@@ -176,25 +161,24 @@ public class Enemy_Mushroom : EnemyControllerBase
     public void Anim_StunEnd()
     {
         if (animator != null) animator.SetBool("IsStun", false);
-        CommonMoveSetting();
+        ReturnToIdle();
     }
 
     #endregion
 
-    void PrepareAttack()
+    private void PrepareAttack()
     {
         rb.linearVelocity = Vector2.zero;
 
         animEffect.PlayAttackWarning();
 
-        if (animator != null)
-        {
-            // 攻撃方向の保持
-            attackDirection = Mathf.Sign(player.position.x - transform.position.x);
-        }
+        if (player == null) return;
+
+        // 攻撃方向の保持
+        attackDirection = Mathf.Sign(player.position.x - transform.position.x);
     }
 
-    void Attack()
+    private void Attack()
     {
         // 保持済みの方向で移動しながら攻撃
         rb.linearVelocity = new Vector2(attackDirection * attackSpeed, 0);
@@ -206,7 +190,7 @@ public class Enemy_Mushroom : EnemyControllerBase
         }
     }
 
-    void ChangeState(State newState)
+    private void ChangeState(State newState)
     {
         animEffect.KillAllEffects();
 
@@ -239,7 +223,7 @@ public class Enemy_Mushroom : EnemyControllerBase
                 break;
 
             case State.PrepareAttack:
-                animator.SetTrigger("PrepareAttack");
+                if (animator != null) animator.SetTrigger("PrepareAttack");
                 PrepareAttack();
                 break;
 
@@ -249,40 +233,14 @@ public class Enemy_Mushroom : EnemyControllerBase
                 break;
 
             case State.Stun:
-                animator.SetBool("IsStun", true);
+                if (animator != null) animator.SetBool("IsStun", true);
                 break;
         }
     }
 
-    //protected override void Hit()
-    //{
-    //    base.Hit();
-
-    //    // TODO:ノックバック+無敵時間付与 Baseでいいかも
-    //}
-
-    //protected override void Die()
-    //{
-    //    base.Die();
-    //    // TODO:いらないかも
-    //    //ChangeState(State.Die);
-    //}
-
-    /// <summary>
-    /// IdleとRunの自動判定 + State変更
-    /// </summary>
-    void CommonMoveSetting()
+    private void ReturnToIdle()
     {
-        // 距離に応じてIdle or Runに戻る
-        //float distance = GetDistanceToPlayer();
-        //if (distance > detectRange)
-        //{
-            ChangeState(State.Idle);
-        //}
-        //else
-        //{
-        //    ChangeState(State.Run);
-        //}
+        ChangeState(State.Idle);
     }
 
     protected override void RecoverFromHit()

@@ -54,8 +54,7 @@ public class PlayerMoveController : MonoBehaviour
 
     private void Update()
     {
-        if (damageController.IsDead) return;
-        if (damageController.IsKnockBacking) return;
+        if (!CanUpdateMovement()) return;
 
         isGrounded = groundSensor.IsGrounded;
 
@@ -67,8 +66,7 @@ public class PlayerMoveController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (damageController.IsDead) return;
-        if (damageController.IsKnockBacking) return;
+        if (!CanUpdateMovement()) return;
 
         CulcPlayerSpeed();
         ApplyBetterJump();
@@ -77,6 +75,11 @@ public class PlayerMoveController : MonoBehaviour
     public void SetMoveInput(Vector2 input)
     {
         moveInput = input;
+    }
+
+    private bool CanUpdateMovement()
+    {
+        return !damageController.IsDead && !damageController.IsKnockBacking;
     }
 
     public void Jump()

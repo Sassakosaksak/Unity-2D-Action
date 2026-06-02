@@ -54,8 +54,7 @@ public class PlayerDamageController : MonoBehaviour
 
     public void TakeDamage(int damage, Vector2 attackerPosition)
     {
-        if (isInvincible) return;
-        if (isDead) return;
+        if (!CanTakeDamage()) return;
 
         playerController.CancelAttack();
 
@@ -71,13 +70,15 @@ public class PlayerDamageController : MonoBehaviour
         StartCoroutine(DamageSequence(attackerPosition));
     }
 
+    private bool CanTakeDamage()
+    {
+        return !isInvincible && !isDead;
+    }
+
     private IEnumerator DamageSequence(Vector2 attackerPosition)
     {
         isInvincible = true;
-        isKnockBacking = true;
-        isHit = true;
-
-        animator.SetBool(PlayerAnimatorParamNames.IsHit, isHit);
+        StartHit();
 
         animEffect.PlayHitPunch();
         animEffect.PlayInvincibleBlink();
@@ -95,6 +96,13 @@ public class PlayerDamageController : MonoBehaviour
 
         isInvincible = false;
         animEffect.StopInvincibleBlink();
+    }
+
+    private void StartHit()
+    {
+        isKnockBacking = true;
+        isHit = true;
+        animator.SetBool(PlayerAnimatorParamNames.IsHit, isHit);
     }
 
     public void RecoverFromHit()

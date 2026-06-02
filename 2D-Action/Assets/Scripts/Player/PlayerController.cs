@@ -27,17 +27,14 @@ public class PlayerController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (!canInput) return;
-        if (damageController.IsDead) return;
+        if (!CanReceiveInput()) return;
 
         moveController.SetMoveInput(context.ReadValue<Vector2>());
     }
 
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if (!canInput) return;
-        if (damageController.IsDead) return;
-        if (damageController.IsKnockBacking) return;
+        if (!CanAct()) return;
         if (!context.started) return;
 
         attackController.HandleAttackInput();
@@ -45,15 +42,23 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (!canInput) return;
         if (!context.started) return;
-        if (damageController.IsDead) return;
-        if (damageController.IsKnockBacking) return;
+        if (!CanAct()) return;
 
         moveController.Jump();
     }
 
     #endregion
+
+    private bool CanReceiveInput()
+    {
+        return canInput && !damageController.IsDead;
+    }
+
+    private bool CanAct()
+    {
+        return CanReceiveInput() && !damageController.IsKnockBacking;
+    }
 
     #region Animation Events
 

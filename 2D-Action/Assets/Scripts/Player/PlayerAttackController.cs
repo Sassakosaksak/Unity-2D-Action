@@ -55,9 +55,7 @@ public class PlayerAttackController : MonoBehaviour
 
     public void EndAttack()
     {
-        isAttacking = false;
-        canComboInput = false;
-        comboStep = 0;
+        ResetAttackState();
 
         animator.SetBool(PlayerAnimatorParamNames.IsAttacking, false);
         animator.SetInteger(PlayerAnimatorParamNames.ComboStep, comboStep);
@@ -65,9 +63,7 @@ public class PlayerAttackController : MonoBehaviour
 
     public void CancelAttack()
     {
-        isAttacking = false;
-        canComboInput = false;
-        comboStep = 0;
+        ResetAttackState();
 
         animator.ResetTrigger(PlayerAnimatorParamNames.Attack);
         animator.SetBool(PlayerAnimatorParamNames.IsAttacking, false);
@@ -76,8 +72,7 @@ public class PlayerAttackController : MonoBehaviour
 
     public void Anim_AttackStart()
     {
-        if (damageController.IsHit) return;
-        if (damageController.IsDead) return;
+        if (!CanAcceptAnimationAttackEvent()) return;
 
         isAttacking = true;
         animator.SetBool(PlayerAnimatorParamNames.IsAttacking, true);
@@ -90,8 +85,7 @@ public class PlayerAttackController : MonoBehaviour
 
     public void OpenComboInput()
     {
-        if (damageController.IsHit) return;
-        if (damageController.IsDead) return;
+        if (!CanAcceptAnimationAttackEvent()) return;
 
         canComboInput = true;
     }
@@ -99,5 +93,17 @@ public class PlayerAttackController : MonoBehaviour
     public void CloseComboInput()
     {
         canComboInput = false;
+    }
+
+    private void ResetAttackState()
+    {
+        isAttacking = false;
+        canComboInput = false;
+        comboStep = 0;
+    }
+
+    private bool CanAcceptAnimationAttackEvent()
+    {
+        return !damageController.IsHit && !damageController.IsDead;
     }
 }

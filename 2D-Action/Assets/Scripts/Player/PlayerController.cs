@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerAttackController))]
+[RequireComponent(typeof(PlayerDamageController))]
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
@@ -9,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     PlayerGroundSensor groundSensor;
     private PlayerDamageController damageController;
+    private PlayerAttackController attackController;
 
     Vector2 moveInput;
 
@@ -17,21 +20,12 @@ public class PlayerController : MonoBehaviour
     public Collider2D BodyCollider => damageController.BodyCollider;
 
     private bool isGrounded;
-    private bool isAttacking;
     [SerializeField]
     private bool rightFacing = true;
     private bool isAutoMoving = false;
     private float autoMoveDirection = 1f;
     private bool canInput = true;
 
-    private int comboStep = 0;
-    private bool canComboInput = false;
-
-    private int maxComboStep = 2;
-
-    [SerializeField]
-    private float attackMoveMultiplier = 0.3f;
-    
     private State currentState;
 
     [SerializeField]
@@ -79,6 +73,7 @@ public class PlayerController : MonoBehaviour
         animEffect = GetComponent<AnimationEffectController>();
         animator = GetComponentInChildren<Animator>();
         damageController = GetComponent<PlayerDamageController>();
+        attackController = GetComponent<PlayerAttackController>();
     }
 
     void Start()
@@ -140,7 +135,7 @@ public class PlayerController : MonoBehaviour
         // 入力値
         float move = isAutoMoving ? autoMoveDirection : moveInput.x;
 
-        if (isAttacking)
+        if (attackController.IsAttacking)
         {
             float facingDirection = rightFacing ? 1f : -1f;
 
@@ -150,7 +145,8 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        float moveSpeedMultiplier = isAttacking ? attackMoveMultiplier : 1f;
+        // 攻撃中は移動速度下げる
+        float moveSpeedMultiplier = attackController.IsAttacking ? attackController.AttackMoveMultiplier : 1f;
 
         // 小さい値を0に（ブレ防止）
         if (Mathf.Abs(move) < 0.1f) move = 0f;
@@ -174,7 +170,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 攻撃終了後は移動方向へ向き直す
-        if (!isAttacking && !IsInAttackAnimation())
+        if (!attackController.IsAttacking && !IsInAttackAnimation())
         {
             UpdateFacing(move);
         }
@@ -225,7 +221,7 @@ public class PlayerController : MonoBehaviour
         moveInput = context.ReadValue<Vector2>();
 
         // 攻撃中は向き変更禁止
-        if (isAttacking) return;
+        if (attackController.IsAttacking) return;
 
         // ノックバックの移動は操作不可時間があるため見ない
         //if (isKnockBacking) return;
@@ -238,7 +234,7 @@ public class PlayerController : MonoBehaviour
         if (damageController.IsKnockBacking) return;
         if (!context.started) return;
 
-        TryAttack();
+        attackController.HandleAttackInput();
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -261,29 +257,22 @@ public class PlayerController : MonoBehaviour
 
     public void Anim_AttackStart()
     {
-        if (damageController.IsHit) return;
-        if (damageController.IsDead) return;
-
-        isAttacking = true;
-        animator.SetBool("IsAttacking", true);
+        attackController.Anim_AttackStart();
     }
 
     public void OpenComboInput()
     {
-        if (damageController.IsHit) return;
-        if (damageController.IsDead) return;
-
-        canComboInput = true;
+        attackController.OpenComboInput();
     }
 
     public void CloseComboInput()
     {
-        canComboInput = false;
+        attackController.CloseComboInput();
     }
 
     public void Anim_AttackEnd()
     {
-        EndAttack();
+        attackController.Anim_AttackEnd();
     }
 
     #endregion
@@ -291,39 +280,6 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int damage, Vector2 attackerPosition)
     {
         damageController.TakeDamage(damage, attackerPosition);
-    }
-
-    private void TryAttack()
-    {
-        if (!isAttacking)
-        {
-            StartAttack(1);
-            return;
-        }
-
-        if (!canComboInput) return;
-        if (comboStep >= maxComboStep) return;
-
-        StartAttack(comboStep + 1);
-    }
-    private void StartAttack(int comboStep)
-    {
-        isAttacking = true;
-        this.comboStep = comboStep;
-
-        animator.SetBool("IsAttacking", true);
-        animator.SetInteger("ComboStep", comboStep);
-        animator.SetTrigger("Attack");
-    }
-
-    private void EndAttack()
-    {
-        isAttacking = false;
-        canComboInput = false;
-        comboStep = 0;
-
-        animator.SetBool("IsAttacking", false);
-        animator.SetInteger("ComboStep", comboStep);
     }
 
     public void RecoverFromHit()
@@ -367,12 +323,6 @@ public class PlayerController : MonoBehaviour
 
     public void CancelAttack()
     {
-        isAttacking = false;
-        canComboInput = false;
-        comboStep = 0;
-
-        animator.ResetTrigger("Attack");
-        animator.SetBool("IsAttacking", false);
-        animator.SetInteger("ComboStep", 0);
+        attackController.CancelAttack();
     }
 }

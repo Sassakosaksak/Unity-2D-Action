@@ -83,8 +83,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (isDead) return;
-        if (isKnockBacking) return;
+        if (!CanAct()) return;
     }
 
     protected virtual void FixedUpdate()
@@ -98,11 +97,10 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     public virtual void TakeDamage(int damage, Vector2 attackerPosition)
     {
-        if (isDead) return;
-        if (isInvincible) return;
+        if (!CanTakeDamage()) return;
 
         enemyBaseSEController.PlayHit();
-        currentHP -= damage;
+        ApplyDamage(damage);
         KnockBack(attackerPosition);
 
         if (currentHP <= 0)
@@ -205,9 +203,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
     {
         if (rightFacing == faceRight) return;
 
-        rightFacing = faceRight;
-
-        ApplyFacing();
+        FaceTo(faceRight);
     }
 
     protected virtual void FlipToPlayer()
@@ -221,6 +217,32 @@ public abstract class EnemyControllerBase : MonoBehaviour
     protected virtual void RecoverFromHit()
     {
 
+    }
+
+    protected virtual bool CanTakeDamage()
+    {
+        return !isDead && !isInvincible;
+    }
+
+    protected virtual bool CanMove()
+    {
+        return !isDead && !isKnockBacking;
+    }
+
+    protected virtual bool CanAct()
+    {
+        return !isDead && !isKnockBacking;
+    }
+
+    protected virtual void ApplyDamage(int damage)
+    {
+        currentHP -= damage;
+    }
+
+    protected virtual void FaceTo(bool faceRight)
+    {
+        rightFacing = faceRight;
+        ApplyFacing();
     }
 
     private void ApplyFacing()

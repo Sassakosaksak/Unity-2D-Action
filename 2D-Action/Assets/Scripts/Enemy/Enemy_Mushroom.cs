@@ -67,8 +67,7 @@ public class Enemy_Mushroom : EnemyControllerBase
 
     protected override void Update()
     {
-        if (isDead) return;
-        if (isKnockBacking) return;
+        if (!CanAct()) return;
         
         base.Update();
 

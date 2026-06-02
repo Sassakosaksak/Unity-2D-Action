@@ -117,7 +117,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.SetTrigger("Hit");
+            animator.SetTrigger(EnemyAnimatorParamNames.Hit);
             animEffect.PlayHitFlash();
             animEffect.PlayHitPunch();
 
@@ -135,7 +135,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
         if (animator != null)
         {
             rb.linearVelocity = Vector2.zero;
-            animator.SetBool("IsDie", true);
+            animator.SetBool(EnemyAnimatorParamNames.IsDie, true);
             animEffect.PlayHitFlash();
             animEffect.PlayHitPunch();
             animEffect.PlayHitShake();

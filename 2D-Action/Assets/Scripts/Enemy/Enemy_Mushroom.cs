@@ -146,7 +146,7 @@ public class Enemy_Mushroom : EnemyControllerBase
 
         attackTimer = 0f;
 
-        if (animator != null && animator.GetBool("IsStun"))
+        if (animator != null && animator.GetBool(EnemyAnimatorParamNames.IsStun))
         {
             return;
         }
@@ -160,7 +160,7 @@ public class Enemy_Mushroom : EnemyControllerBase
 
     public void Anim_StunEnd()
     {
-        if (animator != null) animator.SetBool("IsStun", false);
+        if (animator != null) animator.SetBool(EnemyAnimatorParamNames.IsStun, false);
         ReturnToIdle();
     }
 
@@ -199,7 +199,7 @@ public class Enemy_Mushroom : EnemyControllerBase
         switch (newState)
         {
             case State.Idle:
-                if (animator != null) animator.SetBool("IsDetect", false);
+                if (animator != null) animator.SetBool(EnemyAnimatorParamNames.IsDetect, false);
                 // 初回のみその場で一時待機
                 if (hasInitialized)
                 {
@@ -211,7 +211,7 @@ public class Enemy_Mushroom : EnemyControllerBase
 
             case State.Run:
                 ResetAttackRangeBonus(); 
-                if (animator != null) animator.SetBool("IsDetect", true);
+                if (animator != null) animator.SetBool(EnemyAnimatorParamNames.IsDetect, true);
 
                 float currentTime = Time.time;
                 if(currentTime > lastDetectSETime + detectSECooldown)
@@ -223,17 +223,17 @@ public class Enemy_Mushroom : EnemyControllerBase
                 break;
 
             case State.PrepareAttack:
-                if (animator != null) animator.SetTrigger("PrepareAttack");
+                if (animator != null) animator.SetTrigger(EnemyAnimatorParamNames.PrepareAttack);
                 PrepareAttack();
                 break;
 
             case State.Attack:
-                if (animator != null) animator.SetTrigger("Attack");
+                if (animator != null) animator.SetTrigger(EnemyAnimatorParamNames.Attack);
                 Attack();
                 break;
 
             case State.Stun:
-                if (animator != null) animator.SetBool("IsStun", true);
+                if (animator != null) animator.SetBool(EnemyAnimatorParamNames.IsStun, true);
                 break;
         }
     }

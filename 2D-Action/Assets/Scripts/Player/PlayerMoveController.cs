@@ -60,9 +60,9 @@ public class PlayerMoveController : MonoBehaviour
         isGrounded = groundSensor.IsGrounded;
 
         // アニメ
-        animator.SetFloat("HorizontalSpeed", Mathf.Abs(rb.linearVelocity.x));
-        animator.SetBool("IsGrounded", isGrounded);
-        animator.SetFloat("VerticalSpeed", rb.linearVelocity.y);
+        animator.SetFloat(PlayerAnimatorParamNames.HorizontalSpeed, Mathf.Abs(rb.linearVelocity.x));
+        animator.SetBool(PlayerAnimatorParamNames.IsGrounded, isGrounded);
+        animator.SetFloat(PlayerAnimatorParamNames.VerticalSpeed, rb.linearVelocity.y);
     }
 
     private void FixedUpdate()
@@ -84,7 +84,7 @@ public class PlayerMoveController : MonoBehaviour
         // TODO: コヨーテタイム、ジャンプバッファ入れたい
         if (!isGrounded) return;
 
-        animator.SetTrigger("Jump");
+        animator.SetTrigger(PlayerAnimatorParamNames.Jump);
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
     }
 

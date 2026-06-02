@@ -77,7 +77,7 @@ public class PlayerDamageController : MonoBehaviour
         isKnockBacking = true;
         isHit = true;
 
-        animator.SetBool("IsHit", isHit);
+        animator.SetBool(PlayerAnimatorParamNames.IsHit, isHit);
 
         animEffect.PlayHitPunch();
         animEffect.PlayInvincibleBlink();
@@ -101,7 +101,7 @@ public class PlayerDamageController : MonoBehaviour
     {
         isKnockBacking = false;
         isHit = false;
-        animator.SetBool("IsHit", isHit);
+        animator.SetBool(PlayerAnimatorParamNames.IsHit, isHit);
     }
 
     private void Die()
@@ -110,8 +110,8 @@ public class PlayerDamageController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
         rb.linearVelocity = Vector2.zero;
 
-        animator.SetTrigger("Die");
-        animator.SetBool("IsDead", true);
+        animator.SetTrigger(PlayerAnimatorParamNames.Die);
+        animator.SetBool(PlayerAnimatorParamNames.IsDead, true);
 
         StartCoroutine(DieSequence());
     }

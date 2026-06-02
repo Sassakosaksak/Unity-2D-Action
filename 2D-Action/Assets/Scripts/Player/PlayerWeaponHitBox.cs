@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerAttack : MonoBehaviour
+public class PlayerWeaponHitBox : MonoBehaviour
 {
     [SerializeField]
     private Collider2D hitBoxCollider;

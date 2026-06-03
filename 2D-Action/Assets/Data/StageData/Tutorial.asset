@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Tutorial
   m_EditorClassIdentifier: 
   displayName: Tutorial
-  scene: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
+  sceneName: TutorialScene

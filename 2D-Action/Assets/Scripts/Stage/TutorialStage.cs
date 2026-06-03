@@ -92,7 +92,7 @@ public class TutorialStageFlow : StageFlowBase
         yield return new WaitForSeconds(2f);
 
         chest.PlayEmptySE();
-        playerMessageUI.ShowMessage("‹ó‚Á‚Û‚¾ccB");
+        playerMessageUI.ShowMessage("Empty......");
 
         playerController.SetInputEnabled(true);
     }

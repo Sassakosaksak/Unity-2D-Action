@@ -1,4 +1,4 @@
-# ===== Unity =====
+﻿# ===== Unity =====
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -31,4 +31,3 @@ Thumbs.db
 /2D-Action/Assets/Libraries
 *.otf
 /2D-Action/Assets/Audios
-/Img

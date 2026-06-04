@@ -7460,7 +7460,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tresure Seeker
+  m_text: Treasure Seeker
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3ec834b11997da4419648337cb61833e, type: 2}
   m_sharedMaterial: {fileID: -7859405058782242110, guid: 3ec834b11997da4419648337cb61833e, type: 2}

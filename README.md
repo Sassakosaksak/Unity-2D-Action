@@ -8,6 +8,17 @@ Unityで制作している2D横スクロールアクションゲーム。
 短いステージ構成のプロトタイプとして、小さなゲームループの構造までは実装済み。  
 今後はステージギミック、敵キャラクター、プレイヤーアクションを追加してゲーム性を広げていく。
 
+## デモ
+
+### Stage Select
+![Stage Select](Img/StageSelect.gif)
+
+### Treasure
+![Treasure](Img/ChestOpened.gif)
+
+### Combat
+![Combat](Img/Combat.gif)
+
 ## プレイ
 
 [TreasureSeeker - itch.io](https://sassakosaksak.itch.io/treasureseeker)

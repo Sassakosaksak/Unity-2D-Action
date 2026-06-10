@@ -202,7 +202,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
     {
         if (rightFacing == faceRight) return;
 
-        FaceTo(faceRight);
+        FaceToRight(faceRight);
     }
 
     protected virtual void FlipToPlayer()
@@ -233,7 +233,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
         currentHP -= damage;
     }
 
-    protected virtual void FaceTo(bool faceRight)
+    protected virtual void FaceToRight(bool faceRight)
     {
         rightFacing = faceRight;
         ApplyFacing();

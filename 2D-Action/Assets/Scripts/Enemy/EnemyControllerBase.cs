@@ -37,6 +37,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     protected bool isDead = false;
     protected bool isInvincible = false;
+    private Vector3 baseScale;
 
     [Header("Collision of Between Enemies")]
     [SerializeField]
@@ -62,6 +63,8 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     protected virtual void Awake()
     {
+        baseScale = transform.localScale;
+
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
         animEffect = GetComponentInChildren<AnimationEffectController>();
@@ -242,16 +245,15 @@ public abstract class EnemyControllerBase : MonoBehaviour
     private void ApplyFacing()
     {
         // 敵オブジェクトはデフォルト左向きで作っているので
-        // !rightFacingで(1,1,1)を設定
-        if (!rightFacing)
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            transform.localScale = new Vector3(-1, 1, 1);
-        }
+        // -1で右向き、1で左向き
+        float direction = rightFacing ? -1f : 1f;
+
+        transform.localScale = new Vector3(
+            Mathf.Abs(baseScale.x) * direction,
+            baseScale.y,
+            baseScale.z);
     }
+
     protected virtual bool IsPlayerDead()
     {
         if (player == null) return true;

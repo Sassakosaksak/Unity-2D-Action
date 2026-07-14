@@ -43,8 +43,6 @@ public class Enemy_Minotaur : EnemyControllerBase
     private float secondAttackSpeed = 1.3f;
     [SerializeField, Range(0f, 1f)]
     private float secondAttackChance = 0.5f;
-    [SerializeField]
-    private int secondAttackDamage = 2;
 
     private State currentState;
     private Vector2 patrolOrigin;
@@ -52,6 +50,8 @@ public class Enemy_Minotaur : EnemyControllerBase
     private float attackCooldownTimer;
     private float attackDirection;
     private bool useSecondAttack;
+
+    public bool IsSecondAttack => currentState == State.Attack2;
 
     protected override void Start()
     {
@@ -131,6 +131,7 @@ public class Enemy_Minotaur : EnemyControllerBase
     private void UpdateChase()
     {
         float distance = GetDistanceToPlayer();
+        float horizontalDistance = Mathf.Abs(player.position.x - transform.position.x);
 
         if (distance > loseRange)
         {
@@ -140,7 +141,8 @@ public class Enemy_Minotaur : EnemyControllerBase
 
         FlipToPlayer();
 
-        if (distance <= attackRange && attackCooldownTimer >= attackCooldown)
+        if (horizontalDistance <= attackRange &&
+            attackCooldownTimer >= attackCooldown)
         {
             EnterAttackWarning();
             return;
@@ -257,15 +259,6 @@ public class Enemy_Minotaur : EnemyControllerBase
         attackCooldownTimer = 0f;
         animator.SetBool(EnemyAnimatorParamNames.IsSecondAttack, false);
         EnterChase();
-    }
-
-    public override void BodyAttack(PlayerController targetPlayer)
-    {
-        if (targetPlayer == null) return;
-        if (currentState != State.Attack1 && currentState != State.Attack2) return;
-
-        int damage = currentState == State.Attack2 ? secondAttackDamage : bodyAttackDamage;
-        targetPlayer.TakeDamage(damage, transform.position);
     }
 
     protected override void Hit()

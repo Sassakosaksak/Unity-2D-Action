@@ -8,6 +8,10 @@ public class AnimationEffectController : MonoBehaviour
 
     private Tween blinkTween;
     private Tween warningTween;
+    private Tween hitFlashTween;
+    private Tween deathFadeTween;
+    private Tween shakeTween;
+    private Tween punchTween;
 
     private void Awake()
     {
@@ -22,6 +26,10 @@ public class AnimationEffectController : MonoBehaviour
         // Tween’Ç‰Á‚²‚Æ‚É’Ç‰Á‚·‚é‚±‚Æ
         blinkTween?.Kill();
         warningTween?.Kill();
+        hitFlashTween?.Kill();
+        deathFadeTween?.Kill();
+        shakeTween?.Kill(true);
+        punchTween?.Kill(true);
 
         ResetColor();
     }
@@ -33,13 +41,35 @@ public class AnimationEffectController : MonoBehaviour
         spriteRenderer.color = Color.white;
     }
 
+    public void PlayDeathBlink()
+    {
+        blinkTween?.Kill();
+
+        blinkTween = spriteRenderer
+                     .DOFade(0.3f, 0.2f)
+                     .SetLoops(-1, LoopType.Yoyo)
+                     .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+    }
+
+    public void PlayDeathFlash()
+    {
+        hitFlashTween?.Kill();
+        ResetColor();
+
+        hitFlashTween = spriteRenderer.DOColor(new Color(1f, 0.5f, 0.5f), 0.3f)
+                                      .SetLoops(-1, LoopType.Yoyo)
+                                      .SetLink(gameObject, LinkBehaviour.KillOnDestroy)
+                                      .OnComplete(ResetColor);
+    }
+
     public void PlayInvincibleBlink()
     {
         blinkTween?.Kill();
 
         blinkTween = spriteRenderer
                      .DOFade(0.3f, 0.08f)
-                     .SetLoops(-1, LoopType.Yoyo);
+                     .SetLoops(-1, LoopType.Yoyo)
+                     .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
     }
 
     public void StopInvincibleBlink()
@@ -53,18 +83,40 @@ public class AnimationEffectController : MonoBehaviour
 
     public void PlayHitFlash()
     {
-        spriteRenderer.DOColor(new Color(1f, 0.5f, 0.5f), 0.1f)
-                      .SetLoops(3, LoopType.Yoyo);
+        hitFlashTween?.Kill();
+        ResetColor();
+
+        hitFlashTween = spriteRenderer.DOColor(new Color(1f, 0.5f, 0.5f), 0.1f)
+                                      .SetLoops(4, LoopType.Yoyo)
+                                      .SetLink(gameObject, LinkBehaviour.KillOnDestroy)
+                                      .OnComplete(ResetColor);
     }
 
     public void PlayHitShake()
     {
-        transform.DOShakePosition(0.2f, 0.2f);
+        shakeTween?.Kill(true);
+
+        shakeTween = transform.DOShakePosition(0.2f, 0.2f)
+                              .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
     }
 
     public void PlayHitPunch()
     {
-        transform.DOPunchScale(Vector3.one * 0.15f, 0.15f);
+        punchTween?.Kill(true);
+
+        punchTween = transform.DOPunchScale(Vector3.one * 0.15f, 0.15f)
+                              .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
+    }
+
+    public void PlayDeathFade(float delaySeconds, float durationSeconds, System.Action onComplete)
+    {
+        deathFadeTween?.Kill();
+
+        deathFadeTween = spriteRenderer
+                         .DOFade(0f, Mathf.Max(0f, durationSeconds))
+                         .SetDelay(Mathf.Max(0f, delaySeconds))
+                         .SetLink(gameObject, LinkBehaviour.KillOnDestroy)
+                         .OnComplete(() => onComplete?.Invoke());
     }
 
     public void PlayAttackWarning()
@@ -72,7 +124,8 @@ public class AnimationEffectController : MonoBehaviour
         warningTween?.Kill();
 
         warningTween = spriteRenderer.DOColor(new Color(1f, 0.5f, 0f) /*ƒIƒŒƒ“ƒW*/ , 0.12f)
-                                     .SetLoops(4, LoopType.Yoyo);
+                                     .SetLoops(4, LoopType.Yoyo)
+                                     .SetLink(gameObject, LinkBehaviour.KillOnDestroy);
     }
 
     public void StopAttackWarning()

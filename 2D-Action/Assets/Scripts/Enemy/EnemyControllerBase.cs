@@ -55,6 +55,8 @@ public abstract class EnemyControllerBase : MonoBehaviour
     private float hitStopDurationOfDie = 0.2f;
     private float hitStopScale = 0.05f;
 
+    private const float deathFadeDurationSeconds = 2f;
+
     /// <summary>
     /// キャラクターのレベル
     /// 速度やダメージなどに影響を与える予定
@@ -141,13 +143,34 @@ public abstract class EnemyControllerBase : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero;
             animator.SetBool(EnemyAnimatorParamNames.IsDie, true);
-            animEffect.PlayHitFlash();
+            animEffect.KillAllEffects();
             animEffect.PlayHitPunch();
             animEffect.PlayHitShake();
+            animEffect.PlayDeathFlash();
+            animEffect.PlayDeathBlink();
         }
 
-        // TODO:Dieアニメーション後にDestroyするように修正
-        Destroy(gameObject, 1.5f);
+        if (animator == null)
+        {
+            Destroy(gameObject, deathFadeDurationSeconds);
+        }
+    }
+
+    /// <summary>
+    /// 死亡アニメーション完了後にフェードアウトを開始する
+    /// </summary>
+
+    public void Anim_DieEnd()
+    {
+        if (!isDead) return;
+
+        if (animEffect == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        animEffect.PlayDeathFade(0f, deathFadeDurationSeconds, () => Destroy(gameObject));
     }
 
     protected virtual void KnockBack(float knockBackDirectionX)

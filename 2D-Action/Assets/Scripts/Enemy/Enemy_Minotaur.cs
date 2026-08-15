@@ -42,7 +42,8 @@ public class Enemy_Minotaur : EnemyControllerBase
 
     [Header("Attack")]
     [SerializeField]
-    private float attackCooldown = 2f;
+    [Tooltip("攻撃クールダウンの範囲")]
+    private Vector2 attackCooldownRangeSeconds = new Vector2(1f, 2f);
     [SerializeField]
     [Tooltip("1段目の突進距離")]
     private float firstAttackDashDistance = 0.45f;
@@ -62,6 +63,7 @@ public class Enemy_Minotaur : EnemyControllerBase
     private Vector2 patrolOrigin;
     private float patrolTimer;
     private float attackCooldownTimer;
+    private float attackCooldownSeconds;
     private float attackDirection;
     private float attackDashTimer;
     private float attackDashSpeed;
@@ -74,7 +76,8 @@ public class Enemy_Minotaur : EnemyControllerBase
         base.Start();
 
         patrolOrigin = transform.position;
-        attackCooldownTimer = attackCooldown;
+        attackCooldownSeconds = GetRandomAttackCooldown();
+        attackCooldownTimer = attackCooldownSeconds;
         EnterPatrolIdle();
     }
 
@@ -159,7 +162,7 @@ public class Enemy_Minotaur : EnemyControllerBase
 
         // 攻撃射程内かつクールダウン完了時は、停止範囲より先に攻撃へ移行する
         if (horizontalDistance <= attackRange &&
-            attackCooldownTimer >= attackCooldown)
+            attackCooldownTimer >= attackCooldownSeconds)
         {
             EnterAttackWarning();
             return;
@@ -338,8 +341,18 @@ public class Enemy_Minotaur : EnemyControllerBase
     {
         StopAttackDash();
         attackCooldownTimer = 0f;
+        attackCooldownSeconds = GetRandomAttackCooldown();
         animator.SetBool(EnemyAnimatorParamNames.IsSecondAttack, false);
         EnterChase();
+    }
+
+    // 攻撃クールダウンを指定範囲から抽選してログに出力する
+    private float GetRandomAttackCooldown()
+    {
+        float min = Mathf.Min(attackCooldownRangeSeconds.x, attackCooldownRangeSeconds.y);
+        float max = Mathf.Max(attackCooldownRangeSeconds.x, attackCooldownRangeSeconds.y);
+        float cooldownSeconds = Random.Range(min, max);
+        return cooldownSeconds;
     }
 
     private void StartAttackDash(float distance, float duration)

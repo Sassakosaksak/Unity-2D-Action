@@ -30,8 +30,10 @@ public abstract class EnemyControllerBase : MonoBehaviour
     private float invincibleTime = 0.3f;
     [SerializeField]
     protected bool isKnockBacking = false;
+    private Coroutine knockBackCoroutine;
     [SerializeField]
     private float knockBackTime = 0.5f;
+    private float postKnockBackRecoveryTime = 0.3f;
     [SerializeField]
     private float knockBackDecay = 0.9f;
 
@@ -97,13 +99,13 @@ public abstract class EnemyControllerBase : MonoBehaviour
         }
     }
 
-    public virtual void TakeDamage(int damage, Vector2 attackerPosition)
+    public virtual void TakeDamage(int damage, float knockBackDirectionX)
     {
         if (!CanTakeDamage()) return;
 
         enemyBaseSEController.PlayHit();
         ApplyDamage(damage);
-        KnockBack(attackerPosition);
+        KnockBack(knockBackDirectionX);
 
         if (currentHP <= 0)
         {
@@ -148,26 +150,34 @@ public abstract class EnemyControllerBase : MonoBehaviour
         Destroy(gameObject, 1.5f);
     }
 
-    protected virtual void KnockBack(Vector2 attackerPosition)
+    protected virtual void KnockBack(float knockBackDirectionX)
     {
-        StartCoroutine(KnockBackCoroutine(attackerPosition));
+        // 多段攻撃時、最後に受けた攻撃を起点としてノックバック処理を更新する
+        if (knockBackCoroutine != null)
+        {
+            StopCoroutine(knockBackCoroutine);
+        }
+
+        knockBackCoroutine = StartCoroutine(KnockBackCoroutine(knockBackDirectionX));
     }
 
-    private IEnumerator KnockBackCoroutine(Vector2 attackerPosition)
+    private IEnumerator KnockBackCoroutine(float knockBackDirectionX)
     {
         isKnockBacking = true;
 
-        Vector2 direction =
-            ((Vector2)transform.position - attackerPosition).normalized;
-
-        rb.linearVelocity = new Vector2(direction.x * knockBackPower, rb.linearVelocity.y);
+        float directionX = Mathf.Sign(knockBackDirectionX);
+        rb.linearVelocity = new Vector2(directionX * knockBackPower, rb.linearVelocity.y);
         // 自然な吹っ飛びにするための倍率
         yield return new WaitForSeconds(knockBackTime);
 
         rb.linearVelocity = Vector2.zero;
-        isKnockBacking = false;
+
+        yield return new WaitForSeconds(postKnockBackRecoveryTime);
 
         RecoverFromHit();
+
+        knockBackCoroutine = null;
+        isKnockBacking = false;
     }
 
     protected virtual IEnumerator InvincibleCoroutine()
@@ -191,7 +201,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     public virtual void BodyAttack(PlayerController player)
     {
-        if( player == null) return;
+        if (player == null || isKnockBacking) return;
 
         rb.linearVelocity = Vector2.zero;
         player.TakeDamage(bodyAttackDamage, transform.position);

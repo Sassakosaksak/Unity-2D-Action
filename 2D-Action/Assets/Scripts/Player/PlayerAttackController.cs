@@ -4,6 +4,7 @@ public class PlayerAttackController : MonoBehaviour
 {
     private Animator animator;
     private PlayerDamageController damageController;
+    private PlayerMoveController moveController;
 
     private bool isAttacking;
     private int comboStep = 0;
@@ -17,11 +18,13 @@ public class PlayerAttackController : MonoBehaviour
 
     public bool IsAttacking => isAttacking;
     public float AttackMoveMultiplier => attackMoveMultiplier;
+    public float AttackDirectionX { get; private set; }
 
     private void Awake()
     {
         animator = GetComponentInChildren<Animator>();
         damageController = GetComponent<PlayerDamageController>();
+        moveController = GetComponent<PlayerMoveController>();
     }
 
     /// <summary>
@@ -45,6 +48,7 @@ public class PlayerAttackController : MonoBehaviour
 
     public void StartAttack(int comboStep)
     {
+        AttackDirectionX = moveController.RightFacing ? 1f : -1f;
         isAttacking = true;
         this.comboStep = comboStep;
 

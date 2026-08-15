@@ -14,9 +14,19 @@ public class Enemy_Minotaur_EventRelay : MonoBehaviour
         minotaur.Anim_Attack1Start();
     }
 
+    public void Attack1DashStart()
+    {
+        minotaur.Anim_Attack1DashStart();
+    }
+
     public void Attack2Start()
     {
         minotaur.Anim_Attack2Start();
+    }
+
+    public void Attack2DashStart()
+    {
+        minotaur.Anim_Attack2DashStart();
     }
 
     public void Attack1End()

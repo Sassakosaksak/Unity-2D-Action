@@ -33,6 +33,12 @@ public class Enemy_Minotaur : EnemyControllerBase
     private float runSpeed = 1.5f;
     [SerializeField]
     private float attackRange = 1.5f;
+    [SerializeField]
+    [Tooltip("プレイヤーとの横距離がこの値以下の場合、追跡移動を停止する")]
+    private float holdPositionRange = 0.25f;
+    [SerializeField]
+    [Tooltip("プレイヤーとの横距離がこの値以下の場合、向きを変更しない")]
+    private float facingDeadZone = 0.05f;
 
     [Header("Attack")]
     [SerializeField]
@@ -141,16 +147,17 @@ public class Enemy_Minotaur : EnemyControllerBase
     private void UpdateChase()
     {
         float distance = GetDistanceToPlayer();
-        float horizontalDistance = Mathf.Abs(player.position.x - transform.position.x);
+        float horizontalDelta = player.position.x - transform.position.x;
+        float horizontalDistance = Mathf.Abs(horizontalDelta);
 
+        // プレイヤーが追跡解除距離を超えた場合、巡回待機へ戻る
         if (distance > loseRange)
         {
             EnterPatrolIdle();
             return;
         }
 
-        FlipToPlayer();
-
+        // 攻撃射程内かつクールダウン完了時は、停止範囲より先に攻撃へ移行する
         if (horizontalDistance <= attackRange &&
             attackCooldownTimer >= attackCooldown)
         {
@@ -158,9 +165,49 @@ public class Enemy_Minotaur : EnemyControllerBase
             return;
         }
 
-        float direction = Mathf.Sign(player.position.x - transform.position.x);
+        // 重なり・至近距離では移動と移動アニメーションを停止する
+        if (horizontalDistance <= Mathf.Max(0f, holdPositionRange))
+        {
+            SetMovementAnimation(false);
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            return;
+        }
+
+        // 停止範囲外ではプレイヤーの方向を向き、追跡移動を再開する
+        SetMovementAnimation(true);
+        FacePlayerIfOutsideDeadZone(horizontalDelta);
+
+        float direction = Mathf.Sign(horizontalDelta);
         Vector2 separation = GetSeparationVelocity();
         rb.linearVelocity = new Vector2(direction * runSpeed + separation.x, rb.linearVelocity.y);
+    }
+
+    /// <summary>
+    /// プレイヤーとの横距離がデッドゾーンを超えた場合のみ、プレイヤーの方向を向く
+    /// </summary>
+    private void FacePlayerIfOutsideDeadZone(float horizontalDelta)
+    {
+        float deadZone = Mathf.Max(0f, facingDeadZone);
+
+        if (horizontalDelta > deadZone)
+        {
+            FaceToRight(true);
+        }
+        else if (horizontalDelta < -deadZone)
+        {
+            FaceToRight(false);
+        }
+    }
+
+    /// <summary>
+    /// 移動状態に応じてIdleとRunのアニメーションを切り替える
+    /// </summary>
+    private void SetMovementAnimation(bool isMoving)
+    {
+        if (animator != null)
+        {
+            animator.SetBool(EnemyAnimatorParamNames.IsDetect, isMoving);
+        }
     }
 
     private void UpdateAttack()
@@ -245,7 +292,7 @@ public class Enemy_Minotaur : EnemyControllerBase
         currentState = State.AttackWarning;
         rb.linearVelocity = Vector2.zero;
 
-        FlipToPlayer();
+        FacePlayerIfOutsideDeadZone(player.position.x - transform.position.x);
         attackDirection = rightFacing ? 1f : -1f;
         useSecondAttack = Random.value < secondAttackChance;
         animator.SetBool(EnemyAnimatorParamNames.IsSecondAttack, useSecondAttack);

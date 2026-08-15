@@ -205,11 +205,21 @@ public class Enemy_Minotaur : EnemyControllerBase
     /// <summary>
     /// 移動状態に応じてIdleとRunのアニメーションを切り替える
     /// </summary>
+    // Animatorへ移動状態を反映する
     private void SetMovementAnimation(bool isMoving)
     {
         if (animator != null)
         {
-            animator.SetBool(EnemyAnimatorParamNames.IsDetect, isMoving);
+            animator.SetBool(EnemyAnimatorParamNames.IsMoving, isMoving);
+        }
+    }
+
+    // Animatorへ検知状態を反映する
+    private void SetDetectionAnimation(bool isDetected)
+    {
+        if (animator != null)
+        {
+            animator.SetBool(EnemyAnimatorParamNames.IsDetect, isDetected);
         }
     }
 
@@ -247,11 +257,8 @@ public class Enemy_Minotaur : EnemyControllerBase
         patrolTimer = Random.Range(idleDurationRange.x, idleDurationRange.y);
         rb.linearVelocity = Vector2.zero;
         animEffect.KillAllEffects();
-
-        if (animator != null)
-        {
-            animator.SetBool(EnemyAnimatorParamNames.IsDetect, false);
-        }
+        SetMovementAnimation(false);
+        SetDetectionAnimation(false);
     }
 
     private void EnterPatrolWalk()
@@ -273,27 +280,23 @@ public class Enemy_Minotaur : EnemyControllerBase
             FaceToRight(Random.value >= 0.5f);
         }
 
-        if (animator != null)
-        {
-            animator.SetBool(EnemyAnimatorParamNames.IsDetect, true);
-        }
+        SetMovementAnimation(true);
+        SetDetectionAnimation(false);
     }
 
     private void EnterChase()
     {
         currentState = State.Chase;
         animEffect.KillAllEffects();
-
-        if (animator != null)
-        {
-            animator.SetBool(EnemyAnimatorParamNames.IsDetect, true);
-        }
+        SetMovementAnimation(false);
+        SetDetectionAnimation(true);
     }
 
     private void EnterAttackWarning()
     {
         currentState = State.AttackWarning;
         rb.linearVelocity = Vector2.zero;
+        SetMovementAnimation(false);
 
         FacePlayerIfOutsideDeadZone(player.position.x - transform.position.x);
         attackDirection = rightFacing ? 1f : -1f;

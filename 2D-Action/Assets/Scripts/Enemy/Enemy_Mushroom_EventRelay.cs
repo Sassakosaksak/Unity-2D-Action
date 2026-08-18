@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyAnimationRelay : MonoBehaviour
+public class Enemy_Mushroom_EventRelay : MonoBehaviour
 {
     private Enemy_Mushroom mush;
 

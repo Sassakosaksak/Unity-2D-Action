@@ -4,9 +4,15 @@ public class PlayerWeaponHitBox : MonoBehaviour
 {
     [SerializeField]
     private Collider2D hitBoxCollider;
+    private PlayerAttackController playerAttackController;
 
     // ïêäÌÇ≈ïœÇ¶ÇÁÇÍÇÈÇÊÇ§Ç…
     protected int attackPower = 2;
+
+    private void Awake()
+    {
+        playerAttackController = GetComponentInParent<PlayerAttackController>();
+    }
 
     private void Start()
     {
@@ -16,7 +22,7 @@ public class PlayerWeaponHitBox : MonoBehaviour
     {
         if (other.TryGetComponent(out EnemyControllerBase enemy))
         {
-            enemy.TakeDamage(attackPower, transform.position);
+            enemy.TakeDamage(attackPower, playerAttackController.AttackDirectionX);
             return;
         }
 

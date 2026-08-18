@@ -5,7 +5,10 @@ public static class EnemyAnimatorParamNames
     public const string Hit = "Hit";
     public const string IsDie = "IsDie";
     public const string IsDetect = "IsDetect";
+    public const string IsMoving = "IsMoving";
     public const string PrepareAttack = "PrepareAttack";
     public const string Attack = "Attack";
+    public const string Hurt = "Hurt";
     public const string IsStun = "IsStun";
+    public const string IsSecondAttack = "IsSecondAttack";
 }

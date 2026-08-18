@@ -30,13 +30,16 @@ public abstract class EnemyControllerBase : MonoBehaviour
     private float invincibleTime = 0.3f;
     [SerializeField]
     protected bool isKnockBacking = false;
+    private Coroutine knockBackCoroutine;
     [SerializeField]
     private float knockBackTime = 0.5f;
+    private float postKnockBackRecoveryTime = 0.3f;
     [SerializeField]
     private float knockBackDecay = 0.9f;
 
     protected bool isDead = false;
     protected bool isInvincible = false;
+    private Vector3 baseScale;
 
     [Header("Collision of Between Enemies")]
     [SerializeField]
@@ -52,6 +55,8 @@ public abstract class EnemyControllerBase : MonoBehaviour
     private float hitStopDurationOfDie = 0.2f;
     private float hitStopScale = 0.05f;
 
+    private const float deathFadeDurationSeconds = 2f;
+
     /// <summary>
     /// キャラクターのレベル
     /// 速度やダメージなどに影響を与える予定
@@ -62,6 +67,8 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     protected virtual void Awake()
     {
+        baseScale = transform.localScale;
+
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
         animEffect = GetComponentInChildren<AnimationEffectController>();
@@ -94,13 +101,13 @@ public abstract class EnemyControllerBase : MonoBehaviour
         }
     }
 
-    public virtual void TakeDamage(int damage, Vector2 attackerPosition)
+    public virtual void TakeDamage(int damage, float knockBackDirectionX)
     {
         if (!CanTakeDamage()) return;
 
         enemyBaseSEController.PlayHit();
         ApplyDamage(damage);
-        KnockBack(attackerPosition);
+        KnockBack(knockBackDirectionX);
 
         if (currentHP <= 0)
         {
@@ -136,35 +143,64 @@ public abstract class EnemyControllerBase : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero;
             animator.SetBool(EnemyAnimatorParamNames.IsDie, true);
-            animEffect.PlayHitFlash();
+            animEffect.KillAllEffects();
             animEffect.PlayHitPunch();
             animEffect.PlayHitShake();
+            animEffect.PlayDeathFlash();
+            animEffect.PlayDeathBlink();
         }
 
-        // TODO:Dieアニメーション後にDestroyするように修正
-        Destroy(gameObject, 1.5f);
+        if (animator == null)
+        {
+            Destroy(gameObject, deathFadeDurationSeconds);
+        }
     }
 
-    protected virtual void KnockBack(Vector2 attackerPosition)
+    /// <summary>
+    /// 死亡アニメーション完了後にフェードアウトを開始する
+    /// </summary>
+
+    public void Anim_DieEnd()
     {
-        StartCoroutine(KnockBackCoroutine(attackerPosition));
+        if (!isDead) return;
+
+        if (animEffect == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        animEffect.PlayDeathFade(0f, deathFadeDurationSeconds, () => Destroy(gameObject));
     }
 
-    private IEnumerator KnockBackCoroutine(Vector2 attackerPosition)
+    protected virtual void KnockBack(float knockBackDirectionX)
+    {
+        // 多段攻撃時、最後に受けた攻撃を起点としてノックバック処理を更新する
+        if (knockBackCoroutine != null)
+        {
+            StopCoroutine(knockBackCoroutine);
+        }
+
+        knockBackCoroutine = StartCoroutine(KnockBackCoroutine(knockBackDirectionX));
+    }
+
+    private IEnumerator KnockBackCoroutine(float knockBackDirectionX)
     {
         isKnockBacking = true;
 
-        Vector2 direction =
-            ((Vector2)transform.position - attackerPosition).normalized;
-
-        rb.linearVelocity = new Vector2(direction.x * knockBackPower, rb.linearVelocity.y);
+        float directionX = Mathf.Sign(knockBackDirectionX);
+        rb.linearVelocity = new Vector2(directionX * knockBackPower, rb.linearVelocity.y);
         // 自然な吹っ飛びにするための倍率
         yield return new WaitForSeconds(knockBackTime);
 
         rb.linearVelocity = Vector2.zero;
-        isKnockBacking = false;
+
+        yield return new WaitForSeconds(postKnockBackRecoveryTime);
 
         RecoverFromHit();
+
+        knockBackCoroutine = null;
+        isKnockBacking = false;
     }
 
     protected virtual IEnumerator InvincibleCoroutine()
@@ -188,7 +224,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
     public virtual void BodyAttack(PlayerController player)
     {
-        if( player == null) return;
+        if (player == null || isKnockBacking) return;
 
         rb.linearVelocity = Vector2.zero;
         player.TakeDamage(bodyAttackDamage, transform.position);
@@ -202,7 +238,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
     {
         if (rightFacing == faceRight) return;
 
-        FaceTo(faceRight);
+        FaceToRight(faceRight);
     }
 
     protected virtual void FlipToPlayer()
@@ -233,7 +269,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
         currentHP -= damage;
     }
 
-    protected virtual void FaceTo(bool faceRight)
+    protected virtual void FaceToRight(bool faceRight)
     {
         rightFacing = faceRight;
         ApplyFacing();
@@ -242,16 +278,15 @@ public abstract class EnemyControllerBase : MonoBehaviour
     private void ApplyFacing()
     {
         // 敵オブジェクトはデフォルト左向きで作っているので
-        // !rightFacingで(1,1,1)を設定
-        if (!rightFacing)
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            transform.localScale = new Vector3(-1, 1, 1);
-        }
+        // -1で右向き、1で左向き
+        float direction = rightFacing ? -1f : 1f;
+
+        transform.localScale = new Vector3(
+            Mathf.Abs(baseScale.x) * direction,
+            baseScale.y,
+            baseScale.z);
     }
+
     protected virtual bool IsPlayerDead()
     {
         if (player == null) return true;
